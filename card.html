@@ -1,0 +1,361 @@
+<html>
+
+<head>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta charset="UTF-8">
+<title>記憶掀卡</title>
+ 
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" rel="stylesheet">
+
+<style>
+
+* {
+	box-sizing:border-box;
+}
+
+.cards{
+  width:29%;
+  height:50px;
+  /*line-height:50px;*/
+  text-align:center;
+  background-color:#ddd;
+  margin:3px;
+  text-align:center;
+  -moz-transition-duration: 0.5s; /* Firefox 4 */
+  -webkit-transition-duration: 0.5s; /* Safari 和 Chrome */
+  -o-transition-duration: 0.5s; /* Opera */
+}
+.cards:hover{
+ background-color:RGB(186,225,225);
+ /*color:RGB(186,225,225);*/
+ box-shadow:0 8px 10px 0 rgba(0,0,0,0.12);
+ z-index:1px;
+}
+
+.left_side{
+ max-width:30%;
+ height:100%;
+ float:left;
+}
+
+.left_side > .btn{
+ width: 100%;
+}
+
+.left_side > .btn:hover{
+ background-color:RGB(186,225,225);
+}
+
+.main_part{
+ margin:0 auto;
+ max-width:70%;
+}
+
+.btn{
+margin-bottom:5px;
+margin-top:5px;
+margin-right:5px;
+font-family:Microsoft JhengHei;
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+  <div class="left_side">
+  </br>
+  <h5><b>--選擇題目類型--</b></h5>
+  </br>
+  <button class="btn btn-default" onclick="question_type(this)" id="q1">測試題目</button> </br>
+  <button class="btn btn-default" onclick="question_type(this)" id="q2">GRE題目1</button> </br>
+  <button class="btn btn-default" onclick="question_type(this)" id="q3">日本語</button> </br>
+  <button class="btn btn-default" onclick="question_type(this)" id="q4">GRE題目2</button> </br>
+  </div>
+  
+  <div class="main_part">
+
+   <!---將提示區裡相對應的字以及他們在卡牌區的位置記住，記好後按下"我記住了，開始!"開始遊戲，遊戲規則為點選卡牌區的卡，並找出其相對應的卡牌配對。-</br>
+-->
+   <div class="row">
+     <button class="btn btn-primary" onclick="new_question()">重新出題</button>
+     <button class="btn btn-primary" onclick="show_hint()" id="show_hint_btn">顯示提示</button>
+   </div>
+    <div class="show_question">
+      <h5><b>-----提示區-----</b></h5>
+    </div>
+    <div class="demo_area">
+	</div>
+      </br><h5><b>-----卡牌區-----</b></h5>
+    <div class="row" id="cards_area">
+    </div>
+   <button class="btn btn-primary" onclick="setup()" id="start_btn">我記住了，開始!</button>
+  </div>
+
+<script>
+
+var q_type;
+
+//一載入畫面就先出題
+window.onload = function() {
+ new_question(); 
+};
+
+//重新出題
+function new_question(){
+ demo();
+ demo_cards();
+ hint_click = 0;
+ $("#show_hint_btn").text("顯示提示");
+};
+
+function question_type(q){
+ var qq = q.id;
+ console.log("qq: ",qq);
+ switch (qq) {
+ case "q1":
+　q_type = 1;
+　break;
+ case "q2":
+　q_type = 2;
+　break;
+ case "q3":
+　q_type = 3;
+　break;
+ case "q4":
+　q_type = 4;
+　break;
+ default:
+　q_type = 1;
+ };
+ new_question();
+};
+
+////////////////////////// show_hint //////////////////////////////
+function show_hint(){
+ 
+ hint_click ++;
+ if (hint_click % 2 == 0)
+ {
+   //按下關閉提示會關閉demo的div，然後按鈕的文字會變顯示提示
+   $(".demo_area").css("display","none");
+   $("#show_hint_btn").text("顯示提示");
+ }
+ else
+ {
+   //按下顯示提示會顯示demo的div，然後按鈕的文字會變關閉提示
+   $(".demo_area").css("display","block");
+   $("#show_hint_btn").text("關閉提示");
+ };
+};
+////////////////////////// END of show_hint //////////////////////////////
+
+////////////////////////// demo //////////////////////////////
+function demo(){
+ //先把卡片跟原本的demo都清空，還有恭喜的文字(h1)也清空。
+ //隱藏顯示提示按鈕
+ //顯示開始按鈕
+ //然後再把配對都列出來
+ $(".cards").remove();
+ $(".demo").remove();
+ $("h1").remove();
+ $("#show_hint_btn").css("display","none");
+ $("#start_btn").css("display","block");
+ $(".demo_area").css("display","block");
+ build_list();
+ 
+ list_3 = [list_1,list_2];
+ 
+ list_len = list_3[0].length;
+ for (var j=0;j<list_len;j++){
+  var str = "<div class=" + "\"" + "demo" + "\"" + ">" + list_1[j] + " : " + list_2[j] + "</div>"
+  $(".demo_area").append(str);
+ };
+};
+////////////////////////// END of demo //////////////////////////////
+
+////////////////////////// demo cards //////////////////////////////
+function demo_cards(){
+ $(".cards").remove();
+ picked = [[],[],[]];
+ click_time = 0;
+ //list_3 = [list_1,list_2];
+ checked = 0;
+ 
+for (var i=1;i<=(list_len * 2);i++){ 
+ 
+ var len_1 = list_3.length - 1;
+ var rnd_1 = Math.round(Math.random() * len_1);
+ var len_2 = list_3[rnd_1].length - 1;
+ 
+ if (list_3[rnd_1].length == 0){
+  if (rnd_1 == 0){
+    len_2 = list_3[1].length - 1;
+	 rnd_1 = 1;
+  }
+  else
+  {
+    len_2 = list_3[0].length - 1;
+	 rnd_1 = 0;
+  };
+ };
+ var rnd_2 = Math.round(Math.random()*len_2);
+ 
+ var id_name = "c" + i;
+ var card_value = list_3[rnd_1][rnd_2];
+ var str = "<div class=" + "\"" + "cards" + "\"" + 
+           " id=" + "\"" + id_name + "\"" + 
+		     " value=" + "\"" + card_value + "\"" +		   
+			  "></div>";
+ $("#cards_area").append(str);
+ $("#" + id_name).text(card_value);
+ list_3[rnd_1].splice(rnd_2,1);
+};
+$(".cards").css("color","#black");
+build_list();
+};
+
+//////////////////////////END of demo cards //////////////////////////////
+
+
+
+////////////////////////// setup //////////////////////////////
+function setup(){
+ //$(".demo").remove();
+ $(".demo_area").css("display","none");
+ $("#start_btn").css("display","none"); 
+ $("#show_hint_btn").css("display","block");
+ 
+ for (var i=1;i<=(list_len * 2);i++){
+  var id_name = "c" + i; 
+  $("#" + id_name).css("transform","rotateY(180deg)");
+  $(".cards").css("color","#ddd");
+  
+  $("#" + id_name).text("");
+  
+ };
+ $(".cards").click(function(){
+  cards_click(this);
+ });
+};
+
+//////////////////////////END of setup //////////////////////////////
+
+////////////////////////// cards click //////////////////////////////
+function cards_click(d){
+
+ click_time++;
+
+ $(".cards").css("transition-duration","500");
+ d.style.color = "black";
+ d.style.transform="rotateY(0deg)";
+ d.style.webkitTransform="rotateY(0deg)";
+ d.style.OTransform="rotateY(0deg)";
+ d.style.MozTransform="rotateY(0deg)";
+ 
+ var card_value = document.getElementById(d.id).getAttribute("value");
+ document.getElementById(d.id).innerHTML = card_value;
+ var value_index = list_1.indexOf(card_value);
+ 
+ //找不到元素會回傳-1
+ //找不到元素表示掀起來的兩張卡都是在同一個陣列裡
+ if (value_index == -1){
+  value_index = list_2.indexOf(card_value);
+  picked[1].push(value_index);
+ }
+ else{
+  picked[0].push(value_index);  
+ };
+ picked[2].push(d.id);
+
+ if(click_time % 2 == 1){
+  card_p_list = [];
+ };
+ 
+ if (click_time % 2 == 0){
+  if (picked[0][0] == picked[1][0]){
+   for (var i=0;i<2;i++){
+    var card_p = document.getElementById(picked[2][i]);
+	 card_p.style.backgroundColor = "RGB(59,134,134)";
+	 card_p.style.color = "white";
+	 //card_p.innerHTML = "";
+   };
+   checked++;
+  }
+  else{
+   for (var i=0;i<2;i++){
+    var card_p = document.getElementById(picked[2][i]);
+	  card_p_list.push(card_p);
+   };
+  setTimeout( function (){
+   card_p_list[0].innerHTML = "";
+   //card_p_list[0].style.color = "#ddd";
+   card_p_list[0].style.transform="rotateY(180deg)";
+   card_p_list[0].webkitTransform="rotateY(180deg)";
+   card_p_list[1].innerHTML = "";
+   //card_p_list[1].style.color = "#ddd";
+   card_p_list[1].style.transform="rotateY(180deg)";
+   card_p_list[1].webkitTransform="rotateY(180deg)";
+  },500);
+  };
+  
+ click_time = 0;
+ picked = [[],[],[]]; 
+ }; 
+ //console.log("checked :",checked, "  ,len : ", list_len)
+ if (checked == list_len){
+  $(".cards").css("background-color","#E98B2A");
+  setTimeout( function(){
+    $(".cards").remove();
+	$(".demo").remove();
+	$("#cards_area").append("<h1>GREAT ! you are so smart !<h1>");
+   },1000);
+  setTimeout( function(){
+    new_question();
+   },3000);
+ };
+};
+
+////////////////////////// END of cards click //////////////////////////////
+
+function build_list(){
+ list_a = ['commual','municipal','sundial'];
+ list_b = ['公共的，公用的','市政的，自治區的','日晷'];
+ list_c = ['conducive','conjecture','grandiloquent','synopsis','wane','affinity','astute','callous','commencement'];
+ list_d = ['facilitative','speculation','rhetorical','epitome','dwindle','penchant','savvy','unsparing','genesis'];
+ list_e = ['私','温かい','伝統'];
+ list_f = ['わたし','あたたかい','でんとう'];
+ list_g = ['daunt','recondite','morbid','acquisitive'];
+ list_h = ['dismay','abstruse', 'pathological','avaricious'];
+ switch (q_type) {
+ case 1:
+　list_1 = list_a;
+  list_2 = list_b;
+　break;
+ case 2:
+　list_1 = list_c;
+  list_2 = list_d;
+　break;
+ case 3:
+　list_1 = list_e;
+  list_2 = list_f;
+　break;
+ case 4:
+　list_1 = list_g;
+  list_2 = list_h;
+　break;
+ default:
+　list_1 = list_a;
+  list_2 = list_b;
+ };
+ card_p_list = [];
+};
+
+</script>
+
+</body>
+
+</html>
