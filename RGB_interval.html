@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Count RGB Interval</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" rel="stylesheet">
+
+</head>
+
+<body>
+
+<style>
+* {
+	box-sizing:border-box;
+}
+.container_row{
+  width:40vw;
+  height:20vh;
+  margin:0;
+}
+.cells{
+height:20%;
+width:20%;
+background-color:black;
+border:1px;
+border-color:white;
+border-style:solid;
+color:white;
+text-align:center;
+margin:0;
+}
+
+.btn{
+margin-top:2px;
+}
+
+</style>
+
+
+<div class="row container_row" >
+
+</div>
+
+<div class="row">
+ <div class="col-md-2">
+  <div class="input-group">
+   <span>R:</span><input type="text" class="form-control" id="r_value" placeholder=191>
+  </div>
+ </div>
+  <div class="col-md-2">
+  <div class="input-group">
+   <span>G:</span><input type="text" class="form-control" id="g_value" placeholder=147>
+  </div>
+  </div>
+  <div class="col-md-2">
+  <div class="input-group">
+   <span>B:</span><input type="text" class="form-control" id="b_value" placeholder=191>
+  </div>
+ </div>
+ <div class="col-md-2">
+  <div class="input-group">
+   <span>級距:</span><input type="text" class="form-control" id="interval_number" placeholder=7>
+  </div>
+ </div>
+
+</div>
+
+<!--
+<div class="col-md-2">
+  <div class="input-group">
+   <span>自訂顏色:</span><input type="color" id="color_select">
+  </div>
+ </div>
+-->
+
+<button class="btn btn-primary" onclick="setup()">setcolor</button>
+
+<script type="text/javascript" >
+
+//console.log(document.getElementById("color_select").value)
+
+ //取得輸入框的數值
+ function get_input_element_value(ele){
+  var v = document.getElementById(ele).value;
+  if (v == ""){
+   //如果輸入框沒有輸入任何東西就用預設文字placeholder
+   v = document.getElementById(ele).placeholder;
+  };
+  return v
+ };
+/////////////////////////////////////////////////////////
+
+//用來計算RGB的比率
+p = 0.8;
+
+//setup function
+function setup(){ 
+ //取得中間色RGB以及級距數量
+ r = get_input_element_value("r_value");
+ g = get_input_element_value("g_value");
+ b = get_input_element_value("b_value");
+ cn = get_input_element_value("interval_number");
+ 
+ //中間色的位置
+ a = cn / 2;
+ if (a % 2 != 0){
+ a = parseInt(a) + 1;
+ };
+
+ $(".cells").remove();
+ //設定div的迴圈
+ for (i=1;i<=cn;i++){
+   //加入div
+   var str = "<div class=\"cells\" " + "id=\"d" + i + "\">" + "</div>";
+   $(".container_row").append(str);
+   
+   //計算各階RGB
+   set_rgb()
+   a--;
+   var cell_id = "#d" + i;
+   var rgb_str = "rgb(" + r2 + "," + g2 + "," + b2 + ")"   
+   $(cell_id).css("background-color",rgb_str);
+ };
+ //設定每個格子的大小
+ $(".cells").css("width",(100/cn)+"%");
+ $(".cells").css("height","100%"); 
+};
+/////////////////////////////////////////////////////////
+
+//計算RGB的function
+function set_rgb(){
+ var k = 1 - a;
+ r2 = (Math.floor( r * Math.pow(p,k)));
+ g2 = (Math.floor( g * Math.pow(p,k)));
+ b2 = (Math.floor( b * Math.pow(p,k)));
+ r2 = color_limit(r2);
+ g2 = color_limit(g2);
+ b2 = color_limit(b2);
+ return r2;
+ return g2;
+ return b2;
+};
+/////////////////////////////////////////////////////////
+
+//不讓RGB數值超過0~255的function
+function color_limit(color_value){
+  if (color_value >= 255){
+    color_value = 255;
+  };
+  if (color_value <= 0){
+    color_value = 0;
+  };
+  return color_value;
+};
+/////////////////////////////////////////////////////////
+  
+</script>
+</body>
+</html>
