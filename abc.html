@@ -1,0 +1,70 @@
+<html>
+
+<head>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta charset="UTF-8">
+ 
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" rel="stylesheet">
+
+<style>
+
+* {
+	box-sizing:border-box;
+}
+
+.main_part{
+ margin:0 auto;
+ max-width:70%;
+}
+
+.btn{
+margin-bottom:5px;
+margin-top:5px;
+font-family:Microsoft JhengHei;
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+  
+  <div class="main_part">
+
+   <button class="btn btn-primary" onclick="bd()">按我啊笨蛋</button>
+   <div class="demo_area">
+	</div>
+
+<script>
+
+function bd(){
+  setTimeout(c,500);
+  setTimeout(e,1500);
+  setTimeout(j,2500);
+};
+
+function c(){
+  var str = "<div><h2>" + "生日快樂" + "</h2></div>"
+  $(".demo_area").append(str);
+};
+
+function e(){
+  var str = "<div><h2>" + "Happy Birthday" + "</h2></div>"
+  $(".demo_area").append(str);
+};
+
+function j(){
+  var str = "<div><h2>" + "お誕生日おめでとうございます" + "</h2></div>"
+  $(".demo_area").append(str);
+};
+
+
+</script>
+
+</body>
+
+</html>
