@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>CA test</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+
+<style>
+* {
+	box-sizing:border-box;
+}
+.container_row{
+  width:30vw;
+  height:30vw;
+  margin:0;
+}
+.cells{
+height:20%;
+width:20%;
+background-color:black;
+border:1px;
+border-color:white;
+border-style:solid;
+color:white;
+text-align:center;
+margin:0;
+}
+
+.btn{
+margin-top:2px;
+}
+
+</style>
+
+
+<div class="row container_row" >
+</div>
+
+<div class="row">
+ <div class="col-md-2">
+  <div class="input-group">
+   <span>每列網格數</span><input type="text" class="form-control" id="cell_number" placeholder=5>
+  </div>
+ </div>
+
+</div>
+
+<div class="row">
+ <div class="col-md-2">
+  <div class="input-group">
+   <span>上限值(0~9)</span><input type="text" class="form-control" id="top_value" placeholder=6>
+  </div>
+ </div>
+ <div class="col-md-2">
+  <div class="input-group">
+   <span>下限值(0~9)</span>
+   <input type="text" class="form-control" id="bottom_value" placeholder=2>
+  </div>
+ </div>
+</div>
+
+<button class="btn btn-primary" onclick="setup()">setup</button>
+<button class="btn btn-primary" onclick="go_once()">go once</button>
+
+<div>
+ <button class="btn btn-primary" onclick="draw_grey()" id="draw_grey_button">draw grey</button>
+ <button class="btn btn-primary" onclick="draw_black()" id="draw_black_button">draw black</button>
+</div>
+
+<script type="text/javascript" >
+
+function setup(){
+//自動產生網格
+//抓輸入框的值
+ cn = document.getElementById("cell_number").value;
+ 
+ //如果輸入框沒有輸入任何東西就用預設文字placeholder
+ if (cn == ""){
+  cn = document.getElementById("cell_number").placeholder;
+ };
+
+ $(".cells").remove();
+ for (i=1;i<=(cn * cn);i++){
+   var v = Math.round(Math.random());
+   var str = "<div class=\"cells\" " + "id=\"d" + i + "\">" + v + "</div>";
+   $(".container_row").append(str);
+ };
+ //設定每個格子的大小
+ $(".cells").css("width",(100/cn)+"%");
+ $(".cells").css("height",(100/cn)+"%");
+ 
+ //滑鼠按下時呼叫並傳送this參數給set_color
+ $(".cells").attr("onclick","set_color(this)");
+ 
+ //計算class=cells的總數，即總共有幾個網格
+ cells_num = $(".cells").length;
+ console.log(cells_num);
+};
+
+function count_neighbor(n_id,r){
+  n = 0;
+  //r跟n_id先parse成整數，不然後面要組id的時候容易出錯
+  r = parseInt(r);
+  n_id = parseInt(n_id);
+   //r個div為一排時的九宮格計算
+   count1 = "d" + (n_id - (r+1));
+   count2 = "d" + (n_id - r);
+   count3 = "d" + (n_id - (r-1));
+   count4 = "d" + (n_id - 1);
+   count5 = "d" + (n_id + (r+1));
+   count6 = "d" + (n_id + r);
+   count7 = "d" + (n_id + (r-1));
+   count8 = "d" + (n_id + 1);
+   count_list = [count1,count2,count3,count4,count5,count6,count7,count8];
+   console.log(n_id,count_list);
+   for (i=0;i<=count_list.length;i++){
+    k = document.getElementById(count_list[i]);
+	if ( k != null){
+	 //如果div存在就進行加總
+	 //要先把值全部parse成數字格式再加總
+     n = parseInt(n) + parseInt(k.innerHTML) ;
+    };
+   };
+   //回傳加總的值
+  return n;
+};
+
+
+function go_once(){
+   
+ //抓輸入框的值
+ tt = document.getElementById("top_value").value;
+ pp = document.getElementById("bottom_value").value;
+ 
+ //如果輸入框沒有輸入任何東西就用預設文字placeholder
+ if (tt == ""){
+  tt = document.getElementById("top_value").placeholder;
+ };
+ if (pp==""){
+  pp = document.getElementById("bottom_value").placeholder;
+ };
+ 
+ for (j=1;j<=cells_num;j++){
+  var c = "#d" + j;
+  count_result = count_neighbor(j,cn);
+  if (count_result >= tt || count_result <= pp){
+   $(c).css("background-color","grey");
+  }
+  else
+  {
+   $(c).css("background-color","black");
+  }
+ };
+ set_value();
+};
+
+function set_value(){
+//把灰色的div的值設為0，黑色的設為1
+ for (p=1;p<=cells_num;p++){
+  var c = "d" + p;
+  c_div = document.getElementById(c);
+  if (c_div.style.backgroundColor == "black"){
+   c_div.innerHTML = 1;
+  }
+  else{
+   c_div.innerHTML = 0;
+  };
+ };
+};
+
+draw_grey_on = "false";
+draw_black_on = "false";
+t_grey = 0;
+t_black = 0;
+
+function draw_grey(){
+ t_grey = t_grey + 1;
+ if (t_grey % 2 != 0 ){
+ draw_grey_on = "true";
+ $("#draw_grey_button").text("stop drawing");
+ 
+ //如果draw_black是開啟的話要關掉
+ if (draw_black_on == "true"){
+ draw_black_on = "false";
+ $("#draw_black_button").text("draw black");
+ t_black = t_black + 1;
+ };
+ 
+ }
+ else{
+ draw_grey_on = "false";
+ $("#draw_grey_button").text("draw grey");
+ };
+ console.log("draw_grey_on",draw_grey_on); 
+};
+
+function draw_black(){
+ t_black = t_black + 1;
+ if (t_black % 2 != 0 ){
+ draw_black_on = "true";
+ $("#draw_black_button").text("stop drawing");
+ 
+ //如果draw_grey是開啟的話要關掉
+ if (draw_grey_on == "true"){
+ draw_grey_on = "false";
+ $("#draw_grey_button").text("draw grey");
+ t_grey = t_grey + 1;
+ };
+ 
+ }
+ else{
+ draw_black_on = "false";
+ $("#draw_black_button").text("draw black");
+ };
+ console.log("draw_black_on",draw_black_on); 
+};
+
+function set_color(element){
+ if (draw_grey_on == "true"){
+  element.style.backgroundColor = "grey";
+  element.innerHTML = 0;
+ }
+ else{  
+ };
+ 
+ if (draw_black_on == "true"){
+  element.style.backgroundColor = "black";
+  element.innerHTML = 1;
+ }
+ else{  
+ };
+};
+  
+</script>
+</body>
+</html>
