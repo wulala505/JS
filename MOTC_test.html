@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>興趣點數量計算</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" rel="stylesheet">
+
+ <style>
+      #map {
+       height: 90%;
+       width: 100%;
+	   padding:0px;
+	   margin:auto 0;
+      }
+	  
+	  html,body{
+	    height:100%;
+	  }
+	  .btn{
+	    margin-top:5px;
+		cursor:pointer;
+		font-family:Microsoft JhengHei;
+	  }
+	  .head-banner{
+	    background-color:#282c37;
+		color:white;
+	  }
+ </style> 
+ 
+</head>
+ 
+ 
+ 
+<body>
+
+<div class="container-fluid" style="height:100%">
+  <div class="row" style="height:100%">
+    <div class="col-md-12 head-banner" style="height:10%">
+       <label style="text-align:center">台北市Ubike可借還車輛數地圖</label>
+       <p id="update_time"></p>
+    </div>
+	
+	<div class="col-md-10 col-xs-12" id="map">
+    </div>
+    
+	<div class="col-md-2 col-xs-12">
+	  <div><input type="radio" name="aval" id="aval_rent" checked="true">顯示可借數量</div>
+	  <div><input type="radio" name="aval" id="aval_return">顯示可還數量</div>
+	  
+	  <div>
+	    <button class="btn btn-primary" onclick="initMap()"> 
+	      重新查詢
+	    </button>
+	  </div>
+	  
+	  <div>
+	    <button class="btn btn-primary" id="point" onclick="ChangeMapType(this)">
+	       標記圖
+	    </button>
+	    <button class="btn btn-primary" id="heat" onclick="ChangeMapType(this)">
+	       熱區圖
+	    </button>
+	  </div>
+	  
+	</div>
+  </div>
+</div> 
+ 
+<script>
+
+
+
+/////////////////////////////////////////////////////////
+
+base_url = "https://gist-geo.motc.gov.tw/api/V2/SpatialSearch/Poi/";
+latlng = "[25.044730, 121.536582]/";
+r = "500/";
+poi = "10100,10101,10104/";
+t = "geojson";
+
+requrl = base_url + latlng + r + poi + t ;
+
+$.ajax(
+         {
+               url:requrl,
+               async: false,
+               type:"GET",
+               dataType: "json",
+               success: function(Adata){
+						aval_data = Adata;
+						
+						console.log(Adata);
+						console.log("lat: ", Adata.features[0].geometry.coordinates[0]);
+						console.log("lng: ", Adata.features[0].geometry.coordinates[1]);
+						console.log("category: ", Adata.features[0].properties.Category);
+						console.log("id: ", Adata.features[0].properties.ID);
+						console.log("LandmarkName: ", Adata.features[0].properties.LandmarkName);
+						
+				     },
+					 
+                   error:function(){
+               },
+          });
+
+
+</script>
+
+<!--
+<script src="https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js">
+</script>
+	
+<script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDW2R3JvnGX3WPGyv2NOH_TbprbOIFmBuc&libraries=visualization&callback=initMap">
+</script>
+-->
+
+</body>
+ 
+ 
+</html>
+ 
