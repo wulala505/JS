@@ -36,6 +36,7 @@
 <body>
 
 <div class="container-fluid" style="height:100%">
+  
   <div class="row" style="height:100%">
     <div class="col-md-12 head-banner" style="height:10%">
        <label style="text-align:center">台北市Ubike可借還車輛數地圖</label>
@@ -44,77 +45,146 @@
 	
 	<div class="col-md-10 col-xs-12" id="map">
     </div>
+	
     
+	
 	<div class="col-md-2 col-xs-12">
-	  <div><input type="radio" name="aval" id="aval_rent" checked="true">顯示可借數量</div>
-	  <div><input type="radio" name="aval" id="aval_return">顯示可還數量</div>
-	  
+
+	   <span>請輸入查詢半徑:</span>
+	   <input id="ra" type="text" value="500"></input>
+		
+	   <span>請輸入X坐標</span>
+	   <input id="xcor" type="text" value="121.536582"></input>
+	   
+	   <span>請輸入Y坐標</span>
+	   <input id="ycor" type="text" value="25.044730"></input>
+
 	  <div>
 	    <button class="btn btn-primary" onclick="initMap()"> 
-	      重新查詢
+	      查詢
 	    </button>
 	  </div>
-	  
-	  <div>
-	    <button class="btn btn-primary" id="point" onclick="ChangeMapType(this)">
-	       標記圖
-	    </button>
-	    <button class="btn btn-primary" id="heat" onclick="ChangeMapType(this)">
-	       熱區圖
-	    </button>
-	  </div>
+	  <div style="background-color:#282c37;color:white;margin-top:5px;">查詢結果</div>
+	  <div id="poi_count" style="background-color:RGB(233,233,235)">
+       </div>
 	  
 	</div>
   </div>
 </div> 
+
  
 <script>
-
-
-
 /////////////////////////////////////////////////////////
 
-base_url = "https://gist-geo.motc.gov.tw/api/V2/SpatialSearch/Poi/";
-latlng = "[25.044730, 121.536582]/";
-r = "500/";
-poi = "10100,10101,10104/";
-t = "geojson";
+var taipei_mrt = 0;
+var bus = 0;
+var bike = 0;
+var cates;
+var xcor = parseFloat(document.getElementById("xcor").value);
+var ycor = parseFloat(document.getElementById("ycor").value);
+var r = parseFloat(document.getElementById("ra").value);
 
-requrl = base_url + latlng + r + poi + t ;
 
-$.ajax(
-         {
-               url:requrl,
-               async: false,
-               type:"GET",
-               dataType: "json",
-               success: function(Adata){
-						aval_data = Adata;
-						
-						console.log(Adata);
-						console.log("lat: ", Adata.features[0].geometry.coordinates[0]);
-						console.log("lng: ", Adata.features[0].geometry.coordinates[1]);
-						console.log("category: ", Adata.features[0].properties.Category);
-						console.log("id: ", Adata.features[0].properties.ID);
-						console.log("LandmarkName: ", Adata.features[0].properties.LandmarkName);
-						
-				     },
-					 
-                   error:function(){
-               },
+//////////////google map///////////////////
+
+      function initMap() {
+        // Create the map.
+        var map = new google.maps.Map(document.getElementById('map'), {
+          zoom: 14,
+          center: {lat: ycor, lng: xcor},
+          mapTypeId: 'terrain'
+        });
+		
+		xcor = parseFloat(document.getElementById("xcor").value);
+        ycor = parseFloat(document.getElementById("ycor").value);
+        r = parseFloat(document.getElementById("ra").value);
+		
+		base_url = "https://gist-geo.motc.gov.tw/api/V2/SpatialSearch/Poi/";
+        latlng = "[" + xcor + ", " + ycor + "]/";
+        ra = r + "/";
+        poi = "306,10100,10104/";
+        t = "geojson";
+        
+        requrl = base_url + latlng + ra + poi + t ;
+        
+        $.ajax(
+                 {
+                       url:requrl,
+                       async: false,
+                       type:"GET",
+                       dataType: "json",
+                       success: function(Adata){
+        						aval_data = Adata;
+        						
+        						l = Adata.features.length;
+        						for(i=0;i<l;i++){
+        						  cates = Adata.features[i].properties.Category;
+        						  switch (cates){
+        						    case 306:
+        						      taipei_mrt ++;
+        							  break;
+        						    case 10100:
+        						      bus++;
+        						      break;
+        						    case 10104:
+        						      bike++;
+        							  break;
+        						  };
+        						};
+        
+        						
+        				     },
+        					 
+                           error:function(){
+                       },
+                  });
+          
+          str = "半徑" + r + "公尺內 : " + "</br>"
+               + "公車站牌數量: " + bus + "站" + "</br>" 
+               + "捷運站數量: " + taipei_mrt + "站" + "</br>"
+        	   + "公共自行車站數量: " + bike + "站" + "</br>";
+			   
+          $("#poi_count").text("");
+          $("#poi_count").append(str);
+		  
+		  taipei_mrt = 0;
+          bus = 0;
+          bike = 0;
+		
+        // Construct the circle for each value in citymap.
+        // Note: We scale the area of the circle based on the population.
+          // Add the circle for this city to the map.
+          var cityCircle = new google.maps.Circle({
+            strokeColor: "RGB(210,83,60)",
+            strokeOpacity: 0.8,
+            strokeWeight: 2,
+            fillColor: "RGB(210,83,60)",
+            fillOpacity: 0.35,
+            map: map,
+            ccenter: {lat: ycor, lng: xcor},
+            //radius: Math.sqrt(citymap[city].population) * 100
+			radius: r
           });
-
-
+		  
+		    var marker = new google.maps.Marker({
+            position: {lat: ycor, lng: xcor},
+            //label: aval_rent.toString(),
+			//title: aval_rent.toString(),
+            map: map						
+          });		  
+      }
+	  
+//////////////////////////////////////////////
+ 
 </script>
 
-<!--
+
 <script src="https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js">
 </script>
 	
 <script async defer
     src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDW2R3JvnGX3WPGyv2NOH_TbprbOIFmBuc&libraries=visualization&callback=initMap">
 </script>
--->
 
 </body>
  
