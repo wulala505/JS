@@ -161,9 +161,9 @@ var r = parseFloat(document.getElementById("ra").value);
             fillColor: "RGB(210,83,60)",
             fillOpacity: 0.35,
             map: map,
-            ccenter: {lat: ycor, lng: xcor},
+            center: {lat: ycor, lng: xcor},
             //radius: Math.sqrt(citymap[city].population) * 100
-			radius: r
+	    radius: r
           });
 		  
 		    var marker = new google.maps.Marker({
