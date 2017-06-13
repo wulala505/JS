@@ -31,7 +31,7 @@
  
 </head>
  
- 
+
  
 <body>
 
@@ -45,23 +45,21 @@
 	
 	<div class="col-md-10 col-xs-12" id="map">
     </div>
-	
-    
-	
+
 	<div class="col-md-2 col-xs-12">
 
 	   <span>請輸入查詢半徑:</span>
 	   <input id="ra" type="text" value="500"></input>
 		
-	   <span>請輸入X坐標</span>
+	   <span>請輸入X坐標:</span>
 	   <input id="xcor" type="text" value="121.536582"></input>
 	   
-	   <span>請輸入Y坐標</span>
+	   <span>請輸入Y坐標:</span>
 	   <input id="ycor" type="text" value="25.044730"></input>
 
 	  <div>
 	    <button class="btn btn-primary" onclick="initMap()"> 
-	      查詢
+	      重新查詢
 	    </button>
 	  </div>
 	  <div style="background-color:#282c37;color:white;margin-top:5px;">查詢結果</div>
@@ -83,13 +81,13 @@ var cates;
 var xcor = parseFloat(document.getElementById("xcor").value);
 var ycor = parseFloat(document.getElementById("ycor").value);
 var r = parseFloat(document.getElementById("ra").value);
-
+var markers = [];
 
 //////////////google map///////////////////
 
       function initMap() {
         // Create the map.
-	xcor = parseFloat(document.getElementById("xcor").value);
+		xcor = parseFloat(document.getElementById("xcor").value);
         ycor = parseFloat(document.getElementById("ycor").value);
         var map = new google.maps.Map(document.getElementById('map'), {
           zoom: 14,
@@ -97,7 +95,7 @@ var r = parseFloat(document.getElementById("ra").value);
           mapTypeId: 'terrain'
         });
 		
-	xcor = parseFloat(document.getElementById("xcor").value);
+		xcor = parseFloat(document.getElementById("xcor").value);
         ycor = parseFloat(document.getElementById("ycor").value);
         r = parseFloat(document.getElementById("ra").value);
 		
@@ -110,37 +108,37 @@ var r = parseFloat(document.getElementById("ra").value);
         requrl = base_url + latlng + ra + poi + t ;
         
         $.ajax(
-                 {
-                       url:requrl,
-                       async: false,
-                       type:"GET",
-                       dataType: "json",
-                       success: function(Adata){
-        						aval_data = Adata;
-        						
-        						l = Adata.features.length;
-        						for(i=0;i<l;i++){
-        						  cates = Adata.features[i].properties.Category;
-        						  switch (cates){
-        						    case 306:
-        						      taipei_mrt ++;
-        							  break;
-        						    case 10100:
-        						      bus++;
-        						      break;
-        						    case 10104:
-        						      bike++;
-        							  break;
-        						  };
-        						};
-        
-        						
-        				     },
-        					 
-                           error:function(){
-                       },
-                  });
-          
+           {
+                 url:requrl,
+                 async: false,
+                 type:"GET",
+                 dataType: "json",
+                 success: function(Adata){
+       					aval_data = Adata;
+       					
+       					l = Adata.features.length;
+       					for(i=0;i<l;i++){
+       					  cates = Adata.features[i].properties.Category;
+       					  switch (cates){
+       					    case 306:
+       					      taipei_mrt ++;
+       						  break;
+       					    case 10100:
+       					      bus++;
+       					      break;
+       					    case 10104:
+       					      bike++;
+       						  break;
+       					  };
+       					};
+       
+       					
+       			     },
+       				 
+                     error:function(){
+                 },
+            });
+       
           str = "半徑" + r + "公尺內 : " + "</br>"
                + "公車站牌數量: " + bus + "站" + "</br>" 
                + "捷運站數量: " + taipei_mrt + "站" + "</br>"
@@ -164,22 +162,43 @@ var r = parseFloat(document.getElementById("ra").value);
             fillOpacity: 0.35,
             map: map,
             center: {lat: ycor, lng: xcor},
-            //radius: Math.sqrt(citymap[city].population) * 100
-	    radius: r
+			radius: r
           });
 		  
-		    var marker = new google.maps.Marker({
+		 var marker = new google.maps.Marker({
             position: {lat: ycor, lng: xcor},
             //label: aval_rent.toString(),
 			//title: aval_rent.toString(),
             map: map						
-          });		  
+          });
+
+         map.addListener('click', function(e) {
+           placeMarkerAndPanTo(e.latLng, map);
+         });
+
+         marlers = [];		 
       }
+	  
+  function placeMarkerAndPanTo(latLng, map) {
+  var marker = new google.maps.Marker({
+    position: latLng,
+    map: map
+  });
+  markers.push(marker);
+  if(markers.length>1){
+    for(m=0;m<markers.length-1;m++){
+	  markers[m].setMap(null);
+	};
+  };
+  console.log(marker);
+  document.getElementById("xcor").value = latLng.lng();
+  document.getElementById("ycor").value = latLng.lat();
+
+  };
 	  
 //////////////////////////////////////////////
  
 </script>
-
 
 <script src="https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js">
 </script>
@@ -189,7 +208,4 @@ var r = parseFloat(document.getElementById("ra").value);
 </script>
 
 </body>
- 
- 
 </html>
- 
