@@ -75,9 +75,10 @@
 <script>
 /////////////////////////////////////////////////////////
 
-var taipei_mrt = 0;
+var mrt = 0;
 var bus = 0;
 var bike = 0;
+var food = 0;
 var cates;
 var xcor = parseFloat(document.getElementById("xcor").value);
 var ycor = parseFloat(document.getElementById("ycor").value);
@@ -86,97 +87,106 @@ var markers = [];
 
 //////////////google map///////////////////
 
-      function initMap() {
-        // Create the map.
-		xcor = parseFloat(document.getElementById("xcor").value);
-        ycor = parseFloat(document.getElementById("ycor").value);
-        var map = new google.maps.Map(document.getElementById('map'), {
-          zoom: 14,
-          center: {lat: ycor, lng: xcor},
-          mapTypeId: 'terrain'
-        });
-		
-		xcor = parseFloat(document.getElementById("xcor").value);
-        ycor = parseFloat(document.getElementById("ycor").value);
-        r = parseFloat(document.getElementById("ra").value);
-		
-		base_url = "https://gist-geo.motc.gov.tw/api/V2/SpatialSearch/Poi/";
-        latlng = "[" + ycor + ", " + xcor + "]/";
-        ra = r + "/";
-        poi = "306,10100,10104/";
-        t = "geojson";
-        
-        requrl = base_url + latlng + ra + poi + t ;
-        
-        $.ajax(
-           {
-                 url:requrl,
-                 async: false,
-                 type:"GET",
-                 dataType: "json",
-                 success: function(Adata){
-       					console.log(Adata);
-       					l = Adata.features.length;
-       					for(i=0;i<l;i++){
-       					  cates = Adata.features[i].properties.Category;
-       					  switch (cates){
-       					    case 306:
-       					      taipei_mrt ++;
-       						  break;
-       					    case 10100:
-       					      bus++;
-       					      break;
-       					    case 10104:
-       					      bike++;
-       						  break;
-       					  };
-       					};
-            					
-       			     },
-       				 
-                     error:function(){
-                 },
-            });
-       
-          str = "半徑" + r + "公尺內 : " + "</br>"
-               + "經過公車站牌數量: " + bus + "站" + "</br>" 
-               + "捷運站出入口數量: " + taipei_mrt + "處" + "</br>"
-        	   + "公共自行車站數量: " + bike + "站" + "</br>";
-			   
-          $("#poi_count").text("");
-          $("#poi_count").append(str);
-		  
-		  taipei_mrt = 0;
-          bus = 0;
-          bike = 0;
-		
-        // Construct the circle for each value in citymap.
-        // Note: We scale the area of the circle based on the population.
-          // Add the circle for this city to the map.
-          var cityCircle = new google.maps.Circle({
-            strokeColor: "RGB(210,83,60)",
-            strokeOpacity: 0.8,
-            strokeWeight: 2,
-            fillColor: "RGB(210,83,60)",
-            fillOpacity: 0.35,
-            map: map,
-            center: {lat: ycor, lng: xcor},
-			radius: r
-          });
-		  
-		 var marker = new google.maps.Marker({
-            position: {lat: ycor, lng: xcor},
-            //label: aval_rent.toString(),
-			//title: aval_rent.toString(),
-            map: map						
-          });
+ function initMap() {
+   // Create the map.
+   xcor = parseFloat(document.getElementById("xcor").value);
+   ycor = parseFloat(document.getElementById("ycor").value);
+   var map = new google.maps.Map(document.getElementById('map'), {
+     zoom: 14,
+     center: {lat: ycor, lng: xcor},
+     mapTypeId: 'terrain'
+   });
 
-         map.addListener('click', function(e) {
-           placeMarkerAndPanTo(e.latLng, map);
-         });
+   xcor = parseFloat(document.getElementById("xcor").value);
+   ycor = parseFloat(document.getElementById("ycor").value);
+   r = parseFloat(document.getElementById("ra").value);
+   
+   a_baseurl = "https://gist-geo.motc.gov.tw/api/V2/Locator/AddressLocation/";
+   addr = "台北市內湖區洲子街71號" + "/geojson";
+   a_requrl = a_baseurl + addr;
 
-         marlers = [];		 
-      }
+   base_url = "https://gist-geo.motc.gov.tw/api/V2/SpatialSearch/Poi/";
+   latlng = "[" + ycor + ", " + xcor + "]/";
+   ra = r + "/";
+   poi = "306,10100,10104,506/";
+   t = "geojson";
+   
+   requrl = base_url + latlng + ra + poi + t ;
+   
+   $.ajax(
+      {
+            url:requrl,
+            async: false,
+            type:"GET",
+            dataType: "json",
+            success: function(Adata){
+  					console.log(Adata);
+  					l = Adata.features.length;
+  					for(i=0;i<l;i++){
+  					  cates = Adata.features[i].properties.Category;
+  					  switch (cates){
+  					    case 306:
+  					      mrt ++;
+  						  break;
+  					    case 10100:
+  					      bus++;
+  					      break;
+  					    case 10104:
+  					      bike++;
+  						  break;
+					case 506:
+					  food++;
+                         break;							  
+  					  };
+  					};
+       					
+  			     },
+  				 
+                error:function(){
+            },
+       });
+  
+     str = "半徑" + r + "公尺內 : " + "</br>"
+          + "經過公車站牌數量: " + bus + "站" + "</br>" 
+          + "捷運站出入口數量: " + mrt + "處" + "</br>"
+   	   + "公共自行車站數量: " + bike + "站" + "</br>"
+	   + "小吃店: " + food + "家" + "</br>";
+	   
+     $("#poi_count").text("");
+     $("#poi_count").append(str);
+  
+  mrt = 0;
+  bus = 0;
+  bike = 0;
+  food = 0;
+
+   // Construct the circle for each value in citymap.
+   // Note: We scale the area of the circle based on the population.
+     // Add the circle for this city to the map.
+     var cityCircle = new google.maps.Circle({
+       strokeColor: "RGB(210,83,60)",
+       strokeOpacity: 0.8,
+       strokeWeight: 2,
+       fillColor: "RGB(210,83,60)",
+       fillOpacity: 0.35,
+       map: map,
+       center: {lat: ycor, lng: xcor},
+	radius: r
+     });
+  
+ var marker = new google.maps.Marker({
+       position: {lat: ycor, lng: xcor},
+       //label: aval_rent.toString(),
+	//title: aval_rent.toString(),
+       map: map						
+     });
+
+    map.addListener('click', function(e) {
+      placeMarkerAndPanTo(e.latLng, map);
+    });
+
+    marlers = [];		 
+ }
 	  
   function placeMarkerAndPanTo(latLng, map) {
   var marker = new google.maps.Marker({
