@@ -38,31 +38,32 @@
 <div class="container-fluid" style="height:100%">
   
   <div class="row" style="height:100%">
+
     <div class="col-md-12 head-banner" style="height:10%">
        <label style="text-align:center">興趣點數量計算</label>
        <p id="update_time"></p>
     </div>
 	
 	<div class="col-md-10 col-xs-12" id="map">
-    </div>
+	</div>
 
 	<div class="col-md-2 col-xs-12">
-
-	   <span>請輸入查詢半徑:</span>
-	   <input id="ra" type="text" value="500"></input>
-		
-	   <span>請輸入X坐標:</span>
+	   <p>於地圖上點選位置或輸入坐標</p>
+	   <span>X坐標:</span>
 	   <input id="xcor" type="text" value="121.536582"></input>
 	   
-	   <span>請輸入Y坐標:</span>
+	   <span>Y坐標:</span>
 	   <input id="ycor" type="text" value="25.044730"></input>
+	   
+	   <span>查詢半徑(公尺):</span>
+	   <input id="ra" type="text" value="500"></input>
 
 	  <div>
 	    <button class="btn btn-primary" onclick="initMap()"> 
 	      重新查詢
 	    </button>
 	  </div>
-	  <div style="background-color:#282c37;color:white;margin-top:5px;">查詢結果</div>
+	  <div style="background-color:#282c37;color:white;margin-top:5px;text-align:center;">查詢結果</div>
 	  <div id="poi_count" style="background-color:RGB(233,233,235)">
        </div>
 	  
@@ -114,8 +115,7 @@ var markers = [];
                  type:"GET",
                  dataType: "json",
                  success: function(Adata){
-       					aval_data = Adata;
-       					
+       					console.log(Adata);
        					l = Adata.features.length;
        					for(i=0;i<l;i++){
        					  cates = Adata.features[i].properties.Category;
@@ -131,8 +131,7 @@ var markers = [];
        						  break;
        					  };
        					};
-       
-       					
+            					
        			     },
        				 
                      error:function(){
@@ -140,8 +139,8 @@ var markers = [];
             });
        
           str = "半徑" + r + "公尺內 : " + "</br>"
-               + "公車站牌數量: " + bus + "站" + "</br>" 
-               + "捷運站數量: " + taipei_mrt + "站" + "</br>"
+               + "經過公車站牌數量: " + bus + "站" + "</br>" 
+               + "捷運站出入口數量: " + taipei_mrt + "處" + "</br>"
         	   + "公共自行車站數量: " + bike + "站" + "</br>";
 			   
           $("#poi_count").text("");
