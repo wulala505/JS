@@ -89,13 +89,16 @@ var r = parseFloat(document.getElementById("ra").value);
 
       function initMap() {
         // Create the map.
+	xcor = parseFloat(document.getElementById("xcor").value);
+        ycor = parseFloat(document.getElementById("ycor").value);
+        r = parseFloat(document.getElementById("ra").value);
         var map = new google.maps.Map(document.getElementById('map'), {
           zoom: 14,
           center: {lat: ycor, lng: xcor},
           mapTypeId: 'terrain'
         });
 		
-		xcor = parseFloat(document.getElementById("xcor").value);
+	xcor = parseFloat(document.getElementById("xcor").value);
         ycor = parseFloat(document.getElementById("ycor").value);
         r = parseFloat(document.getElementById("ra").value);
 		
