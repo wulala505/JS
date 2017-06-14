@@ -8,6 +8,9 @@
 <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" rel="stylesheet">
 
  <style>
+      *{
+	  font-family: Microsoft JhengHei;sans-serif;
+	  }
       #map {
        height: 90%;
        width: 100%;
@@ -27,6 +30,7 @@
 	    background-color:#282c37;
 		color:white;
 	  }
+
  </style> 
  
 </head>
@@ -63,9 +67,11 @@
 	      重新查詢
 	    </button>
 	  </div>
+	  <!--
 	  <div style="background-color:#282c37;color:white;margin-top:5px;text-align:center;">查詢結果</div>
 	  <div id="poi_count" style="background-color:RGB(233,233,235)">
        </div>
+	   -->
 	  
 	</div>
   </div>
@@ -146,15 +152,18 @@ var markers = [];
             },
        });
   
-     str = "半徑" + r + "公尺內 : " + "</br>"
+     str = "<div style=" + "\"" + "background-color:RGB(233,233,235);font-size:14px;font-weight:500" + "\"" + ">"
+	      + "<div style=" + "\"" + "background-color:RGB(210,83,60);color:white;text-align:center;" + "\"" + ">查詢結果</div>"
+	      + "半徑" + r + "公尺內 : " + "</br>"
           + "經過公車站牌數量: " + bus + "站" + "</br>" 
           + "捷運站出入口數量: " + mrt + "處" + "</br>"
-   	   + "公共自行車站數量: " + bike + "站" + "</br>"
-	   + "小吃店: " + food + "家" + "</br>";
+   	      + "公共自行車站數量: " + bike + "站" + "</br>"
+	      + "小吃店: " + food + "家" + "</br>" 
+	      + "</div>" ;
 	   
-     $("#poi_count").text("");
-     $("#poi_count").append(str);
-  
+     //$("#poi_count").text("");
+     //$("#poi_count").append(str);
+	 
   mrt = 0;
   bus = 0;
   bike = 0;
@@ -171,7 +180,7 @@ var markers = [];
        fillOpacity: 0.35,
        map: map,
        center: {lat: ycor, lng: xcor},
-	radius: r
+	   radius: r
      });
   
  var marker = new google.maps.Marker({
@@ -180,12 +189,21 @@ var markers = [];
 	//title: aval_rent.toString(),
        map: map						
      });
+	 
+	 var infowindow = new google.maps.InfoWindow({
+          content: str
+        });
+     infowindow.open(map, marker);
+	 
+	 marker.addListener('click', function() {
+          infowindow.open(map, marker);
+        });
 
     map.addListener('click', function(e) {
       placeMarkerAndPanTo(e.latLng, map);
     });
 
-    marlers = [];		 
+    markers = [];		 
  }
 	  
   function placeMarkerAndPanTo(latLng, map) {
@@ -199,7 +217,6 @@ var markers = [];
 	  markers[m].setMap(null);
 	};
   };
-  console.log(marker);
   document.getElementById("xcor").value = latLng.lng();
   document.getElementById("ycor").value = latLng.lat();
 
