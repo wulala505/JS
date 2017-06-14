@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Ubike可借還量地圖</title> 
+<title>UBike可借還量地圖</title>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
@@ -27,8 +27,11 @@
 	    background-color:#282c37;
 		color:white;
 	  }
+	  .head-banner>a{
+	  color:white;
+	  padding:5px;
+	  }
  </style> 
- 
  
 </head>
  
@@ -36,24 +39,28 @@
  
 <body>
 
-
 <div class="container-fluid" style="height:100%">
   <div class="row" style="height:100%">
     <div class="col-md-12 head-banner" style="height:10%">
-     <label style="text-align:center">台北市Ubike可借還車輛數地圖</label>
-     <p id="update_time"></p>
+       <label style="text-align:center">台北市Ubike可借還車輛數地圖</label>
+	   <a float="right" href="Available_Ubike_JP.html">日本語</a>
+	   <a float="right" href="Available_Ubike.html">繁體中文</a>
+       <p id="update_time"></p>
     </div>
+	
 	<div class="col-md-10 col-xs-12" id="map">
     </div>
     
 	<div class="col-md-2 col-xs-12">
 	  <div><input type="radio" name="aval" id="aval_rent" checked="true">顯示可借數量</div>
 	  <div><input type="radio" name="aval" id="aval_return">顯示可還數量</div>
+	  
 	  <div>
 	    <button class="btn btn-primary" onclick="initMap()"> 
 	      重新查詢
 	    </button>
 	  </div>
+	  
 	  <div>
 	    <button class="btn btn-primary" id="point" onclick="ChangeMapType(this)">
 	       標記圖
@@ -62,6 +69,7 @@
 	       熱區圖
 	    </button>
 	  </div>
+	  
 	</div>
   </div>
 </div> 
@@ -72,7 +80,6 @@ var map_type = "heat";
 var aval_rent ;
 
 function ChangeMapType(mtype){
-  
   switch (mtype.id){
     case "heat" :
     map_type = "heat";
@@ -87,12 +94,9 @@ function ChangeMapType(mtype){
 	 initMap();
     break;
   };
-    
 };
 
-
- ///////////////google maps////////////////////////////////
- 
+//////////////////google maps////////////////////////////
  
 function initMap() {
 
@@ -105,7 +109,6 @@ var map = new google.maps.Map(document.getElementById('map'), {
 
 B_len = Ubikes.Ubike_Location.length;
 a_baseurl = "https://ptx.transportdata.tw/MOTC/v2/Bike/Availability/Taipei?"
-
 aval_requrl = "https://ptx.transportdata.tw/MOTC/v2/Bike/Availability/Taipei?$format=JSON" ;
 $.ajax(
          {
@@ -120,8 +123,6 @@ $.ajax(
                    error:function(){
                },
           });
-
-		//console.log(aval_obj[0].AvailableRentBikes);
 
 heatmapData = [];
 
@@ -158,7 +159,6 @@ for (var i=0;i<B_len;i++){
         weight: aval_rent
       }; 
       heatmapData.push(weightedLoc); 
-
     };
   };
   $("#update_time").text("");		
@@ -202,62 +202,7 @@ for (var i=0;i<B_len;i++){
   };
   $("#update_time").text("");		
   $("#update_time").append("最新更新時間: " + aval_obj[0].UpdateTime.toString());
-};
-//////////////// Draw Classify Map ///////////////
-
-/*
-function draw_classify_map(aval_obj){
-for (var i=0;i<B_len;i++){
-  for (var j=0;j<B_len;j++){
-    if (aval_obj[j].StationUID == Ubikes.Ubike_Location[i].StationUID){
-	
-	  if(document.getElementById("aval_rent").checked == true){
-        aval_rent = aval_obj[j].AvailableRentBikes;
-      }
-	  else
-	  {
-	    aval_rent = aval_obj[j].AvailableReturnBikes;
-	  };
-	  
-	  var latLng = new google.maps.LatLng(Ubikes.Ubike_Location[i].Lat,Ubikes.Ubike_Location[i].Lon);
-      var marker = new google.maps.Marker({
-            position: latLng,
-            label: aval_rent.toString(),
-			    title: aval_rent.toString(),
-            map: map						
-          });
-	};
-  };
-  
-  };
-  $("#update_time").text("");		
-  $("#update_time").append("最新更新時間: " + aval_obj[0].UpdateTime.toString());
-
-
-/////////////////////////////////  
-  map.data.setStyle(function(aval_obj) {
-  aval_rent = aval_obj[j].AvailableReturnBikes;
-      return {
-              icon: getCircle(aval_rent)
-             };
-  });
-  
-  function getCircle(aval_rent) {
-        return {
-          path: google.maps.SymbolPath.CIRCLE,
-          fillColor: 'red',
-          fillOpacity: .2,
-          scale: (aval_rent / 10),
-          strokeColor: 'white',
-          strokeWeight: .5
-        };
-      };
-  
-};		
-
-*/
-///////////////////////////////
-		
+ };
 };
 
 
@@ -2560,4 +2505,3 @@ Ubikes ={ "Ubike_Location":[
  
  
 </html>
- 
