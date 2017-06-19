@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Count RGB Interval</title>
+<title>RGB Interval</title>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" rel="stylesheet">
 
@@ -16,7 +16,7 @@
 	box-sizing:border-box;
 }
 .container_row{
-  width:40vw;
+  width:60vw;
   height:20vh;
   margin:0;
 }
@@ -64,22 +64,18 @@ margin-top:2px;
    <span>級距:</span><input type="text" class="form-control" id="interval_number" placeholder=7>
   </div>
  </div>
+ <div class="col-md-2">
+  <div class="input-group">
+   <span>比率(0~1之間):</span><input type="text" class="form-control" id="interval_ratio" placeholder=0.8>
+  </div>
+ </div>
 
 </div>
 
-<!--
-<div class="col-md-2">
-  <div class="input-group">
-   <span>自訂顏色:</span><input type="color" id="color_select">
-  </div>
- </div>
--->
 
 <button class="btn btn-primary" onclick="setup()">setcolor</button>
 
 <script type="text/javascript" >
-
-//console.log(document.getElementById("color_select").value)
 
  //取得輸入框的數值
  function get_input_element_value(ele){
@@ -93,7 +89,7 @@ margin-top:2px;
 /////////////////////////////////////////////////////////
 
 //用來計算RGB的比率
-p = 0.8;
+p = get_input_element_value("interval_ratio");
 
 //setup function
 function setup(){ 
@@ -102,7 +98,7 @@ function setup(){
  g = get_input_element_value("g_value");
  b = get_input_element_value("b_value");
  cn = get_input_element_value("interval_number");
- 
+ p = get_input_element_value("interval_ratio");
  //中間色的位置
  a = cn / 2;
  if (a % 2 != 0){
@@ -122,6 +118,9 @@ function setup(){
    var cell_id = "#d" + i;
    var rgb_str = "rgb(" + r2 + "," + g2 + "," + b2 + ")"   
    $(cell_id).css("background-color",rgb_str);
+   
+   var rgb_str2 = r2 + "," + g2 + "," + b2 
+   $(cell_id).text(rgb_str2);
  };
  //設定每個格子的大小
  $(".cells").css("width",(100/cn)+"%");
