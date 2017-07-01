@@ -16,7 +16,7 @@
 
  
 <body>
-<div class="row">
+<div class="row" style="margin-left:5px;">
   <div class="col-md-6 col-xs-12">
     <span>Type address here:
       <input type="text" id="addr_input"></input>
@@ -45,6 +45,11 @@ function serch_xy(){
 			//header: {Content-Type:"application/json"},
             dataType: "json",
             success: function(Adata){
+					b_name = Adata.SuggestedAddress["0"].Address.PremisesAddress.EngPremisesAddress.BuildingName;
+					d_district = Adata.SuggestedAddress["0"].Address.PremisesAddress.EngPremisesAddress.EngDistrict.DcDistrict;
+					b_nofrom = Adata.SuggestedAddress["0"].Address.PremisesAddress.EngPremisesAddress.EngStreet.BuildingNoFrom;
+					s_name = Adata.SuggestedAddress["0"].Address.PremisesAddress.EngPremisesAddress.EngStreet.StreetName;
+					re = Adata.SuggestedAddress["0"].Address.PremisesAddress.EngPremisesAddress.Region;
 					reqaddress = Adata.RequestAddress.AddressLine[0];
 					lat = Adata.SuggestedAddress[0].Address.PremisesAddress.GeospatialInformation[0].Latitude;	
   			        lng = Adata.SuggestedAddress[0].Address.PremisesAddress.GeospatialInformation[0].Longitude;
@@ -53,10 +58,17 @@ function serch_xy(){
                 error:function(){
             },
        });
-	   str = reqaddress + " : " + "(" + lng + " , " + lat + ")";
+	   str = "Requested Address: " + reqaddress + "</br>"
+	       + "Suggested Information is below : " + "</br>"
+		   + "XY: " + "(" + lng + " , " + lat + ")" + "</br>"
+		   + "BuildingName: " + b_name + "</br>"
+		   + "DcDistrict: " + d_district + "</br>"
+		   + "BuildingNoFrom: " + b_nofrom + "</br>"
+		   + "StreetName: " + s_name + "</br>"
+		   + "Region: " + re;
 	   
   $("#tt").text("");
-  $("#tt").text(str);
+  $("#tt").append(str);
 };
 </script>
 
