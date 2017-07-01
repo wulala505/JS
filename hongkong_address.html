@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>香港地址轉坐標</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" rel="stylesheet">
+
+ <style>
+
+ </style> 
+ 
+</head>
+ 
+
+ 
+<body>
+<input type="text" id="addr_input"></input>
+<button class="btn btn-primary" onclick="serch_xy()">search</button>
+</br>
+<div id="tt"></div>
+
+ 
+<script>
+
+
+/////////////////////////////////////////////////////////   
+function serch_xy(){  
+  base_url = "https://www.als.ogcio.gov.hk/lookup?";
+   q1="q=%3C";
+   q2= document.getElementById("addr_input").value + "%3E&n=1";
+   requrl = base_url + q1 + q2;  
+   
+   $.ajax(
+      {
+            url:requrl,
+            async: false,
+            type:"GET",
+			//header: {Content-Type:"application/json"},
+            dataType: "json",
+            success: function(Adata){
+					reqaddress = Adata.RequestAddress.AddressLine[0];
+					lat = Adata.SuggestedAddress[0].Address.PremisesAddress.GeospatialInformation[0].Latitude;	
+  			        lng = Adata.SuggestedAddress[0].Address.PremisesAddress.GeospatialInformation[0].Longitude;
+				 },
+  				 
+                error:function(){
+            },
+       });
+	   str = reqaddress + " : " + "(" + lng + " , " + lat + ")";
+	   
+  $("#tt").text("");
+  $("#tt").text(str);
+};
+</script>
+
+</body>
+</html>
