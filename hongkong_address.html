@@ -45,6 +45,7 @@ function serch_xy(){
 			//header: {Content-Type:"application/json"},
             dataType: "json",
             success: function(Adata){
+			console.log(Adata);
 					b_name = Adata.SuggestedAddress["0"].Address.PremisesAddress.EngPremisesAddress.BuildingName;
 					d_district = Adata.SuggestedAddress["0"].Address.PremisesAddress.EngPremisesAddress.EngDistrict.DcDistrict;
 					b_nofrom = Adata.SuggestedAddress["0"].Address.PremisesAddress.EngPremisesAddress.EngStreet.BuildingNoFrom;
@@ -58,8 +59,8 @@ function serch_xy(){
                 error:function(){
             },
        });
-	   str = "Requested Address: " + reqaddress + "</br>"
-	       + "Suggested Information is below : " + "</br>"
+	   str = "<h4>Requested Address: </h4>" + document.getElementById("addr_input").value + "</br>"
+	       + "<h4>Suggested Information is below : </h4>"
 		   + "XY: " + "(" + lng + " , " + lat + ")" + "</br>"
 		   + "BuildingName: " + b_name + "</br>"
 		   + "DcDistrict: " + d_district + "</br>"
