@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>日文單字測試</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" rel="stylesheet">
+
+ <style>
+      *{
+	  font-family: Microsoft JhengHei;sans-serif;
+	  box-sizing:border-box;
+	  }
+	  
+	  html,body{
+	    height:100%;
+	  }
+	  .btn{
+	    margin-top:5px;
+		cursor:pointer;
+		font-family:Microsoft JhengHei;
+	  }
+	  .head-banner{
+	    background-color:#282c37;
+		color:white;
+	  }
+	  .addr_locate_panel{
+	    opacity:0;
+		position:absolute;
+		top:12%;
+		left:5%;
+		padding:5px;
+		
+		background-color:white;
+		border:1px solid #ccc;
+		box-shadow:0 2px 10px 0 rgba(0,0,0,12);
+	  }
+	  #addr_banner{
+	    background-color:RGB(210,83,60);
+		height:20px;
+	  }
+
+ </style> 
+ 
+</head>
+ 
+
+ 
+<body>
+<!--
+<div class="container-fluid" style="height:100%">
+  
+  <div class="row" style="height:100%">
+
+    <div class="col-md-12 head-banner" style="height:10%">
+       <label style="text-align:center">興趣點數量計算</label>
+       <button class="btn" id="show_addr" onclick="addr_panel_switch(this);">地址定位</button>
+    </div>
+	
+	<div class="col-md-10 col-xs-12" id="map">
+	</div>
+	<div class="addr_locate_panel">
+	    <div id="addr_banner"></div>
+		<p>請輸入完整地址</p>  
+		<input id="addr_input" type="text" value="台北市內湖區洲仔街71號" placeholder="例如台南市東區大學路1號"></input>
+		<p id="no_addr_label" style="color:red"></p>
+		<div>
+		  <button class="btn btn-primary" onclick="addr_locate()">定位</button>
+		  <button class="btn btn-primary" id="close_addr" onclick="addr_panel_switch(this);">取消</button>
+		</div>
+	</div>
+
+	<div class="col-md-2 col-xs-12">
+	   <p>於地圖上點選位置或輸入坐標</p>
+	   <span>X坐標:</span>
+	   <input id="xcor" type="text" value="121.536582"></input>
+	   
+	   <span>Y坐標:</span>
+	   <input id="ycor" type="text" value="25.044730"></input>
+	   
+	   <span>查詢半徑(公尺):</span>
+	   <input id="ra" type="text" value="500"></input>
+
+	  <div>
+	    <button class="btn btn-primary" onclick="initMap()"> 
+	      重新查詢
+	    </button>
+	  </div>
+	  
+	</div>
+  </div>
+</div> 
+-->
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-6 col-xs-12" id="question-area"> 
+	  <button class="btn btn-primary" onclick="give_question()">出題</button>
+	  <label id="question"></label>
+	</div>
+	<div class="col-me-6 col-xs-12" id="answer-area">
+	  <input type="text" id="input-answer"></input>
+	  <button class="btn btn-primary" onclick="check_answer()">答える</button>
+	</div>
+  </div>
+  
+  <div class="row">
+    <div class="col-md-6 col-xs-12" id="message-area">
+	</div>
+  </div>
+</div>
+ 
+<script>
+
+var json_obj = "[" ;
+
+json_obj += '{"japanese":"会う","yomikata":"あう","chinese":"見面、遇見、碰面"},';
+json_obj += '{"japanese":"青","yomikata":"あお","chinese":"青、藍、綠色"},';
+json_obj += '{"japanese":"青い","yomikata":"あおい","chinese":"藍色(的)、青色(的)、綠色(的)"}';
+
+json_obj += "]";
+
+var words = JSON.parse(json_obj);
+console.log(words);
+var words_len = words.length;
+var question_index,answer;
+
+function give_question(){
+  question_index = Math.floor(Math.random() * words.length);
+  $("#question").text("");
+  $("#question").text(words[question_index].chinese);
+};
+
+function check_answer(){
+  answer = document.getElementById("input-answer").value;
+  if (answer == words[question_index].japanese)
+  {
+    $("#message-area").text("");
+	$("#message-area").text("おめでとう！");
+  }
+  else{
+    $("#message-area").text("");
+	$("#message-area").text("違うです～");
+  };
+};
+
+/*
+function addr_panel_switch(d){
+  $("#no_addr_label").text("");
+  switch (d.id){
+    case "close_addr":
+	  $(".addr_locate_panel").css("opacity",0);
+	  break;
+	case "show_addr":
+	  $(".addr_locate_panel").css("opacity",1);
+	  break;
+  };  
+};
+
+function addr_locate(){
+  address = document.getElementById("addr_input").value;
+  a_baseurl = "https://gist-geo.motc.gov.tw/api/V2/Locator/AddressLocation/";
+  addr = address + "/geojson";
+  a_requrl = a_baseurl + addr;
+  
+  if (address != ""){
+     $.ajax(
+      {
+         url:a_requrl ,
+         async: false,
+         type:"GET",
+         dataType: "json",
+         success: function(Adata){
+           xcor = Adata.features[0].geometry.coordinates[0];
+		   ycor = Adata.features[0].geometry.coordinates[1];
+		   document.getElementById("xcor").value = xcor;
+           document.getElementById("ycor").value = ycor;
+  		 },		
+         error:function(){
+            },
+       });
+	 var map = new google.maps.Map(document.getElementById('map'), {
+       zoom: 14,
+       center: {lat: ycor, lng: xcor},
+       mapTypeId: 'terrain'
+     });
+	 var marker = new google.maps.Marker({
+       position: {lat: ycor, lng: xcor},
+       map: map						
+     });
+	   $("#no_addr_label").text("");
+	   $(".addr_locate_panel").css("opacity",0);
+  }
+  else{
+    $("#no_addr_label").text("");
+    $("#no_addr_label").append("請輸入完整地址!");
+  };
+};
+
+/////////////////////////////////////////////////////////
+
+var mrt = 0;
+var bus = 0;
+var bike = 0;
+var food = 0;
+var cates;
+var xcor = parseFloat(document.getElementById("xcor").value);
+var ycor = parseFloat(document.getElementById("ycor").value);
+var r = parseFloat(document.getElementById("ra").value);
+var markers = [];
+
+//////////////google map///////////////////
+
+ function initMap() {
+   // Create the map.
+   xcor = parseFloat(document.getElementById("xcor").value);
+   ycor = parseFloat(document.getElementById("ycor").value);
+   var map = new google.maps.Map(document.getElementById('map'), {
+     zoom: 14,
+     center: {lat: ycor, lng: xcor},
+     mapTypeId: 'terrain'
+   });
+
+   xcor = parseFloat(document.getElementById("xcor").value);
+   ycor = parseFloat(document.getElementById("ycor").value);
+   r = parseFloat(document.getElementById("ra").value);
+
+   base_url = "https://gist-geo.motc.gov.tw/api/V2/SpatialSearch/Poi/";
+   latlng = "[" + ycor + ", " + xcor + "]/";
+   ra = r + "/";
+   poi = "306,10100,10104,506/";
+   t = "geojson";
+   
+   requrl = base_url + latlng + ra + poi + t ;
+   
+   $.ajax(
+      {
+            url:requrl,
+            async: false,
+            type:"GET",
+            dataType: "json",
+            success: function(Adata){
+  					console.log(Adata);
+  					l = Adata.features.length;
+  					for(i=0;i<l;i++){
+  					  cates = Adata.features[i].properties.Category;
+  					  switch (cates){
+  					    case 306:
+  					      mrt ++;
+  						  break;
+  					    case 10100:
+  					      bus++;
+  					      break;
+  					    case 10104:
+  					      bike++;
+  						  break;
+					case 506:
+					  food++;
+                         break;							  
+  					  };
+  					};
+       					
+  			     },
+  				 
+                error:function(){
+            },
+       });
+  
+     str = "<div style=" + "\"" + "background-color:RGB(233,233,235);font-size:14px;font-weight:500" + "\"" + ">"
+	      + "<div style=" + "\"" + "background-color:RGB(210,83,60);color:white;text-align:center;" + "\"" + ">查詢結果</div>"
+	      + "半徑" + r + "公尺內 : " + "</br>"
+          + "經過公車站牌數量: " + bus + "站" + "</br>" 
+          + "捷運站出入口數量: " + mrt + "處" + "</br>"
+   	      + "公共自行車站數量: " + bike + "站" + "</br>"
+	      + "小吃店: " + food + "家" + "</br>" 
+	      + "</div>" ;
+	   
+     //$("#poi_count").text("");
+     //$("#poi_count").append(str);
+	 
+  mrt = 0;
+  bus = 0;
+  bike = 0;
+  food = 0;
+
+   // Construct the circle for each value in citymap.
+   // Note: We scale the area of the circle based on the population.
+     // Add the circle for this city to the map.
+     var cityCircle = new google.maps.Circle({
+       strokeColor: "RGB(210,83,60)",
+       strokeOpacity: 0.8,
+       strokeWeight: 2,
+       fillColor: "RGB(210,83,60)",
+       fillOpacity: 0.35,
+       map: map,
+       center: {lat: ycor, lng: xcor},
+	   radius: r
+     });
+  
+ var marker = new google.maps.Marker({
+       position: {lat: ycor, lng: xcor},
+       //label: aval_rent.toString(),
+	//title: aval_rent.toString(),
+       map: map						
+     });
+	 
+	 var infowindow = new google.maps.InfoWindow({
+          content: str
+        });
+     infowindow.open(map, marker);
+	 
+	 marker.addListener('click', function() {
+          infowindow.open(map, marker);
+        });
+
+    map.addListener('click', function(e) {
+      placeMarkerAndPanTo(e.latLng, map);
+    });
+
+    markers = [];		 
+ }
+	  
+  function placeMarkerAndPanTo(latLng, map) {
+  var marker = new google.maps.Marker({
+    position: latLng,
+    map: map
+  });
+  markers.push(marker);
+  if(markers.length>1){
+    for(m=0;m<markers.length-1;m++){
+	  markers[m].setMap(null);
+	};
+  };
+  document.getElementById("xcor").value = latLng.lng();
+  document.getElementById("ycor").value = latLng.lat();
+
+  };
+*/	  
+//////////////////////////////////////////////
+ 
+</script>
+
+
+</body>
+</html>
