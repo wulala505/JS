@@ -128,6 +128,8 @@ var question_index,answer;
 
 function give_question(){
   question_index = Math.floor(Math.random() * words.length);
+  $("#message-area").text("");
+  document.getElementById("input-answer").value="";
   $("#question").text("");
   $("#question").text(words[question_index].chinese);
 };
