@@ -1,0 +1,133 @@
+<html>
+<head>
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js"></script>
+
+</head>
+
+
+
+<body >
+  <div id = "json_table">
+  </div>
+  
+  <span>
+    <label>縣市及鄉鎮市區 : </label>
+    <input type="text" id="input_admin" value="新北市新店區"></input>
+  </span>
+  
+  <span>
+    <label>地段及地號 : </label>
+    <input type="text" id="input_land" value="小城段150-0號"></input>
+  </span>
+  <button onclick="get_land_json()">查詢</button>
+<script>
+
+//baseurl = 'http://posland.g0v.io/?landno=';
+
+function get_land_json(){
+  
+  var baseurl = 'http://twland.ronny.tw/index/search?lands[]=';
+  var admin= document.getElementById("input_admin").value;
+  var landno = document.getElementById("input_land").value;
+  var land = admin + landno;  
+  console.log(land);
+  var requrl = baseurl + land;
+  
+    $.ajax({
+    url: requrl,
+    async: false,
+    type: "POST",
+    dataType: "json",
+    success: function(Jdata) {
+	  //console.log(i);
+	  //console.log(land);
+	  console.log("Jdata.features : " , Jdata.features);
+	  
+	  l = Jdata.features.length;
+	  //console.log(l);
+	
+	  if (l==0 || Jdata.features[0].geometry == null){
+	    //$("div").append(landadminlist[i].lasno + "," +  landadminlist[i].lasno_o + "," + land + "," + "not found" + "</br>");
+	  }
+	  else{
+	  for (j=0;j<l;j++){
+	    if (admin == Jdata.features[j].properties.縣市 + Jdata.features[j].properties.鄉鎮){
+           console.log("stringify : ",JSON.stringify(Jdata));
+	    };
+	  };
+	};
+  },
+   
+  error: function() {
+	$("div").append( land + " : error" +"</br>");
+  }
+});
+
+};
+
+
+
+
+console.log(json_str);
+
+//地籍有4436筆
+var json_str = '[{"lasno":"10101011010999000","lasno_o":"1001010999903820","admin":"台北市中正區","landno":"永昌一小段382-1號"}]';
+
+var landadminlist = JSON.parse(json_str);
+
+var landlist_len = landadminlist.length;
+
+for (i=4400;i<landlist_len;i++){
+
+  var land = landadminlist[i].admin + landadminlist[i].landno;
+
+  var requrl = baseurl + land;
+  
+  $.ajax({
+    url: requrl,
+    async: false,
+    type: "POST",
+    dataType: "json",
+    success: function(Jdata) {
+	  //console.log(i);
+	  //console.log(land);
+	  console.log("Jdata.features : " , Jdata.features);
+	  console.log("stringify : ",JSON.stringify(Jdata));
+	  l = Jdata.features.length;
+	  //console.log(l);
+	
+	  if (l==0 || Jdata.features[0].geometry == null){
+	    $("div").append(landadminlist[i].lasno + "," +  landadminlist[i].lasno_o + "," + land + "," + "not found" + "</br>");
+	  }
+	  else{
+	  for (j=0;j<l;j++){
+	    if (landadminlist[i].admin == Jdata.features[j].properties.縣市 + Jdata.features[j].properties.鄉鎮){
+	      $("div").append( land + " : " + "INSERT INTO 'BLMIS_20170711'.'GIS_mlf'('lasno','lasno_o','x','y') VALUES(" + "'" + 
+		                           landadminlist[i].lasno +"'," + "'" + 
+								   landadminlist[i].lasno_o + "'," + 
+								   Jdata.features[j].properties.xcenter +  "," +
+								   Jdata.features[j].properties.ycenter + ")"
+								   + "</br>");
+	    };
+	  };
+	};
+  },
+   
+  error: function() {
+	$("div").append( land + " : error" +"</br>");
+  }
+});
+};
+
+
+
+
+</script>
+
+
+
+</body>
+
+
+</html>
