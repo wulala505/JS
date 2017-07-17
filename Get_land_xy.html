@@ -2,6 +2,7 @@
 <head>
 <title>地籍轉坐標</title>
 <meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" rel="stylesheet">
@@ -71,7 +72,7 @@ footer{
 
 function get_land_json(){
   
-  var baseurl = 'https://twland.ronny.tw/index/search?lands[]=';
+  var baseurl = 'http://twland.ronny.tw/index/search?lands[]=';
   var admin= document.getElementById("input_admin").value;
   var landno = document.getElementById("input_land").value;
   var land = admin + landno;  
