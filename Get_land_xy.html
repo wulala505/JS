@@ -1,26 +1,70 @@
 <html>
 <head>
-
+<title>地籍轉坐標</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" rel="stylesheet">
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js"></script>
+
+<style>
+footer{
+  text-align:center;
+}
+.col-md-6,.col-md-offset-3,.col-xs-12 > *{
+  margin:0 auto;
+}
+
+*{
+  font-family: Microsoft JhengHei;sans-serif;
+  box-sizing:border-box;
+  margin-top:5px;
+}
+</style>
 
 </head>
 
 
 
 <body >
-  <div id = "json_table">
+  
+  <div class="container">
+    <div class="row">
+	  <div class="col-md-6 col-md-offset-3 col-xs-12">
+        <span>
+          <label>縣市及鄉鎮市區 : </label>
+          <input type="text" id="input_admin" value="新北市新店區"></input>
+        </span>
+      </div>
+	</div>
+	
+	<div class="row">
+	  <div class="col-md-6 col-md-offset-3 col-xs-12">
+        <span>
+          <label>地段及地號 : </label>
+          <input type="text" id="input_land" value="小城段150-0號"></input>
+        </span>
+        <button class="btn btn-primary" onclick="get_land_json()">查詢</button>
+      </div>
+	</div>
+    <div class="row">
+	  <div class="col-md-6 col-md-offset-3 col-xs-12">
+	    <div id="xy_result">
+		</div>
+        <textarea class="form-control" id="json_table"  rows="10">
+	    </textarea>
+		<p>
+		  可以呈現JSON資料並存成SHP的網站 : <a href="http://geojson.io/#map=2/20.0/0.0" target="blank">http://geojson.io/#map=2/20.0/0.0</a>
+		</p>
+		<p>
+          引用API : <a href="https://github.com/g0v/posland" target="blank">https://github.com/g0v/posland</a>
+		</p>
+	  </div>
+	</div>
+  
+    
   </div>
   
-  <span>
-    <label>縣市及鄉鎮市區 : </label>
-    <input type="text" id="input_admin" value="新北市新店區"></input>
-  </span>
-  
-  <span>
-    <label>地段及地號 : </label>
-    <input type="text" id="input_land" value="小城段150-0號"></input>
-  </span>
-  <button onclick="get_land_json()">查詢</button>
 <script>
 
 //baseurl = 'http://posland.g0v.io/?landno=';
@@ -48,12 +92,15 @@ function get_land_json(){
 	  //console.log(l);
 	
 	  if (l==0 || Jdata.features[0].geometry == null){
-	    //$("div").append(landadminlist[i].lasno + "," +  landadminlist[i].lasno_o + "," + land + "," + "not found" + "</br>");
+	    $("#json_table").text("查無資料") ;
 	  }
 	  else{
 	  for (j=0;j<l;j++){
 	    if (admin == Jdata.features[j].properties.縣市 + Jdata.features[j].properties.鄉鎮){
            console.log("stringify : ",JSON.stringify(Jdata));
+		   $("#json_table").text( JSON.stringify(Jdata));
+		   $("#xy_result").text("");
+		   $("#xy_result").append("X坐標 : " + Jdata.features["0"].properties.xcenter + "</br>" + "Y坐標 : " + Jdata.features["0"].properties.ycenter );
 	    };
 	  };
 	};
@@ -65,69 +112,11 @@ function get_land_json(){
 });
 
 };
-
-
-
-
-console.log(json_str);
-
-//地籍有4436筆
-var json_str = '[{"lasno":"10101011010999000","lasno_o":"1001010999903820","admin":"台北市中正區","landno":"永昌一小段382-1號"}]';
-
-var landadminlist = JSON.parse(json_str);
-
-var landlist_len = landadminlist.length;
-
-for (i=4400;i<landlist_len;i++){
-
-  var land = landadminlist[i].admin + landadminlist[i].landno;
-
-  var requrl = baseurl + land;
-  
-  $.ajax({
-    url: requrl,
-    async: false,
-    type: "POST",
-    dataType: "json",
-    success: function(Jdata) {
-	  //console.log(i);
-	  //console.log(land);
-	  console.log("Jdata.features : " , Jdata.features);
-	  console.log("stringify : ",JSON.stringify(Jdata));
-	  l = Jdata.features.length;
-	  //console.log(l);
-	
-	  if (l==0 || Jdata.features[0].geometry == null){
-	    $("div").append(landadminlist[i].lasno + "," +  landadminlist[i].lasno_o + "," + land + "," + "not found" + "</br>");
-	  }
-	  else{
-	  for (j=0;j<l;j++){
-	    if (landadminlist[i].admin == Jdata.features[j].properties.縣市 + Jdata.features[j].properties.鄉鎮){
-	      $("div").append( land + " : " + "INSERT INTO 'BLMIS_20170711'.'GIS_mlf'('lasno','lasno_o','x','y') VALUES(" + "'" + 
-		                           landadminlist[i].lasno +"'," + "'" + 
-								   landadminlist[i].lasno_o + "'," + 
-								   Jdata.features[j].properties.xcenter +  "," +
-								   Jdata.features[j].properties.ycenter + ")"
-								   + "</br>");
-	    };
-	  };
-	};
-  },
-   
-  error: function() {
-	$("div").append( land + " : error" +"</br>");
-  }
-});
-};
-
-
-
 
 </script>
 
 
 
 </body>
-
 
 </html>
