@@ -159,7 +159,7 @@ function check_answer(){
 
 function skip(){
   $("#message-area").text("");
-  $("#message-area").text("答案是 : " + words[question_index].japanese);
+  $("#message-area").text("答案是 : " + words[question_index].japanese + "(" + words[question_index].yomikata + ")");
   setTimeout( function(){
       give_question();
    },1500);
