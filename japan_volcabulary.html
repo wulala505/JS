@@ -83,6 +83,7 @@
 	<div class="col-me-6 col-xs-12" id="answer-area">
 	  <input type="text" id="input-answer"></input>
 	  <button class="btn btn-primary" onclick="check_answer()">答える</button>
+	  <button class="btn btn-primary" onclick="skip()">跳過</button>
 	</div>
   </div>
   
@@ -113,7 +114,17 @@ json_obj += '{"japanese":"明後日","yomikata":"あさって","chinese":"後天
 json_obj += '{"japanese":"足","yomikata":"あし","chinese":"腳、腿"},'
 json_obj += '{"japanese":"明日","yomikata":"あした","chinese":"明天"},'
 json_obj += '{"japanese":"あそこ","yomikata":"あそこ","chinese":"那邊"},'
-json_obj += '{"japanese":"遊ぶ","yomikata":"あそぶ","chinese":"遊玩、遊覽、消遣"}'
+json_obj += '{"japanese":"遊ぶ","yomikata":"あそぶ","chinese":"遊玩、遊覽、消遣"},'
+json_obj += '{"japanese":"温かい","yomikata":"あたたかい","chinese":"溫、暖和(的)、溫暖(的)"},'
+json_obj += '{"japanese":"暖かい","yomikata":"あたたかい","chinese":"溫、暖和(的)、溫暖(的)"},'
+json_obj += '{"japanese":"頭","yomikata":"あたま","chinese":"頭、腦、頭髮、(物體的)頂部"},'
+json_obj += '{"japanese":"新しい","yomikata":"あたらしい","chinese":"新的、新鮮的"},'
+json_obj += '{"japanese":"あちら","yomikata":"あちら","chinese":"那裡、那位、那個"},'
+json_obj += '{"japanese":"厚い","yomikata":"あつい","chinese":"厚(的)"},'
+json_obj += '{"japanese":"暑い","yomikata":"あつい","chinese":"(天氣)熱、炎熱"},'
+json_obj += '{"japanese":"熱い","yomikata":"あつい","chinese":"(溫度)熱的、燙的"},'
+json_obj += '{"japanese":"あっち","yomikata":"あっち","chinese":"那裡、那位、那個"},'
+json_obj += '{"japanese":"後","yomikata":"あと","chinese":"(時間)以後、(地點)後面、(距現在)以前、(次序)之後"}'
 
 json_obj += "]";
 
@@ -136,6 +147,9 @@ function check_answer(){
   {
     $("#message-area").text("");
 	$("#message-area").text("おめでとう！");
+	setTimeout( function(){
+      give_question();
+   },1000);
   }
   else{
     $("#message-area").text("");
@@ -143,200 +157,15 @@ function check_answer(){
   };
 };
 
-/*
-function addr_panel_switch(d){
-  $("#no_addr_label").text("");
-  switch (d.id){
-    case "close_addr":
-	  $(".addr_locate_panel").css("opacity",0);
-	  break;
-	case "show_addr":
-	  $(".addr_locate_panel").css("opacity",1);
-	  break;
-  };  
+function skip(){
+  $("#message-area").text("");
+  $("#message-area").text("答案是 : " + words[question_index].japanese);
+  setTimeout( function(){
+      give_question();
+   },1500);
 };
 
-function addr_locate(){
-  address = document.getElementById("addr_input").value;
-  a_baseurl = "https://gist-geo.motc.gov.tw/api/V2/Locator/AddressLocation/";
-  addr = address + "/geojson";
-  a_requrl = a_baseurl + addr;
-  
-  if (address != ""){
-     $.ajax(
-      {
-         url:a_requrl ,
-         async: false,
-         type:"GET",
-         dataType: "json",
-         success: function(Adata){
-           xcor = Adata.features[0].geometry.coordinates[0];
-		   ycor = Adata.features[0].geometry.coordinates[1];
-		   document.getElementById("xcor").value = xcor;
-           document.getElementById("ycor").value = ycor;
-  		 },		
-         error:function(){
-            },
-       });
-	 var map = new google.maps.Map(document.getElementById('map'), {
-       zoom: 14,
-       center: {lat: ycor, lng: xcor},
-       mapTypeId: 'terrain'
-     });
-	 var marker = new google.maps.Marker({
-       position: {lat: ycor, lng: xcor},
-       map: map						
-     });
-	   $("#no_addr_label").text("");
-	   $(".addr_locate_panel").css("opacity",0);
-  }
-  else{
-    $("#no_addr_label").text("");
-    $("#no_addr_label").append("請輸入完整地址!");
-  };
-};
 
-/////////////////////////////////////////////////////////
-
-var mrt = 0;
-var bus = 0;
-var bike = 0;
-var food = 0;
-var cates;
-var xcor = parseFloat(document.getElementById("xcor").value);
-var ycor = parseFloat(document.getElementById("ycor").value);
-var r = parseFloat(document.getElementById("ra").value);
-var markers = [];
-
-//////////////google map///////////////////
-
- function initMap() {
-   // Create the map.
-   xcor = parseFloat(document.getElementById("xcor").value);
-   ycor = parseFloat(document.getElementById("ycor").value);
-   var map = new google.maps.Map(document.getElementById('map'), {
-     zoom: 14,
-     center: {lat: ycor, lng: xcor},
-     mapTypeId: 'terrain'
-   });
-
-   xcor = parseFloat(document.getElementById("xcor").value);
-   ycor = parseFloat(document.getElementById("ycor").value);
-   r = parseFloat(document.getElementById("ra").value);
-
-   base_url = "https://gist-geo.motc.gov.tw/api/V2/SpatialSearch/Poi/";
-   latlng = "[" + ycor + ", " + xcor + "]/";
-   ra = r + "/";
-   poi = "306,10100,10104,506/";
-   t = "geojson";
-   
-   requrl = base_url + latlng + ra + poi + t ;
-   
-   $.ajax(
-      {
-            url:requrl,
-            async: false,
-            type:"GET",
-            dataType: "json",
-            success: function(Adata){
-  					console.log(Adata);
-  					l = Adata.features.length;
-  					for(i=0;i<l;i++){
-  					  cates = Adata.features[i].properties.Category;
-  					  switch (cates){
-  					    case 306:
-  					      mrt ++;
-  						  break;
-  					    case 10100:
-  					      bus++;
-  					      break;
-  					    case 10104:
-  					      bike++;
-  						  break;
-					case 506:
-					  food++;
-                         break;							  
-  					  };
-  					};
-       					
-  			     },
-  				 
-                error:function(){
-            },
-       });
-  
-     str = "<div style=" + "\"" + "background-color:RGB(233,233,235);font-size:14px;font-weight:500" + "\"" + ">"
-	      + "<div style=" + "\"" + "background-color:RGB(210,83,60);color:white;text-align:center;" + "\"" + ">查詢結果</div>"
-	      + "半徑" + r + "公尺內 : " + "</br>"
-          + "經過公車站牌數量: " + bus + "站" + "</br>" 
-          + "捷運站出入口數量: " + mrt + "處" + "</br>"
-   	      + "公共自行車站數量: " + bike + "站" + "</br>"
-	      + "小吃店: " + food + "家" + "</br>" 
-	      + "</div>" ;
-	   
-     //$("#poi_count").text("");
-     //$("#poi_count").append(str);
-	 
-  mrt = 0;
-  bus = 0;
-  bike = 0;
-  food = 0;
-
-   // Construct the circle for each value in citymap.
-   // Note: We scale the area of the circle based on the population.
-     // Add the circle for this city to the map.
-     var cityCircle = new google.maps.Circle({
-       strokeColor: "RGB(210,83,60)",
-       strokeOpacity: 0.8,
-       strokeWeight: 2,
-       fillColor: "RGB(210,83,60)",
-       fillOpacity: 0.35,
-       map: map,
-       center: {lat: ycor, lng: xcor},
-	   radius: r
-     });
-  
- var marker = new google.maps.Marker({
-       position: {lat: ycor, lng: xcor},
-       //label: aval_rent.toString(),
-	//title: aval_rent.toString(),
-       map: map						
-     });
-	 
-	 var infowindow = new google.maps.InfoWindow({
-          content: str
-        });
-     infowindow.open(map, marker);
-	 
-	 marker.addListener('click', function() {
-          infowindow.open(map, marker);
-        });
-
-    map.addListener('click', function(e) {
-      placeMarkerAndPanTo(e.latLng, map);
-    });
-
-    markers = [];		 
- }
-	  
-  function placeMarkerAndPanTo(latLng, map) {
-  var marker = new google.maps.Marker({
-    position: latLng,
-    map: map
-  });
-  markers.push(marker);
-  if(markers.length>1){
-    for(m=0;m<markers.length-1;m++){
-	  markers[m].setMap(null);
-	};
-  };
-  document.getElementById("xcor").value = latLng.lng();
-  document.getElementById("ycor").value = latLng.lat();
-
-  };
-*/	  
-//////////////////////////////////////////////
- 
 </script>
 
 
