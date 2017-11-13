@@ -34,8 +34,8 @@ color:white;
 }
 
 .attr_value{
- width:50%;
- background-color:RGB(166,166,166);
+ width:80%;
+ background-color:RGB(13,122,121);
 }
 
 .attr_str{
@@ -63,23 +63,6 @@ color:white;
     </div>
     
 	<div class="col-md-4 col-xs-12">
-	  <div><input type="radio" name="aval" id="aval_rent" checked="true">顯示可借數量</div>
-	  <div><input type="radio" name="aval" id="aval_return">顯示可還數量</div>
-	  
-	  <div>
-	    <button class="btn btn-primary" onclick="initMap()"> 
-	      重新查詢
-	    </button>
-	  </div>
-	  
-	  <div>
-	    <button class="btn btn-primary" id="point" onclick="ChangeMapType(this)">
-	       標記圖
-	    </button>
-	    <button class="btn btn-primary" id="heat" onclick="ChangeMapType(this)">
-	       熱區圖
-	    </button>
-	  </div>
 	  
 	  <div id = "test">
 	      
@@ -91,30 +74,16 @@ color:white;
  
 <script>
 
-var map_type = "heat";
-var aval_rent ;
-
-function ChangeMapType(mtype){
-  switch (mtype.id){
-    case "heat" :
-    map_type = "heat";
-	 initMap();
-    break;
-    case "point" :
-    map_type = "point";
-	 initMap();
-    break;
-    case "classify" :
-    map_type = "classify";
-	 initMap();
-    break;
-  };
-};
 
 //////////////////google maps////////////////////////////
 var rectangle;
 var map;
 var infoWindow;
+var population_list = [1,3,203132,204452,20,12,23,2];
+population_list = population_list.sort(function(a,b){return a-b});
+console.log(population_list);
+var rank;
+var pr;
 
 function initMap() {
 
@@ -122,23 +91,40 @@ function initMap() {
           zoom: 15,
           center: {lat: 25.053613662719727, lng: 121.54872131347656}
         });
-
 		
-    var bounds = {
+    var bounds = [
+	{
         north:25.053613662719727,
     	west:121.53872131347656,
     	south:25.043613662719727,
     	east:121.54872131347656
-    };
+    },
+	{
+        north:25.063613662719727,
+    	west:121.53872131347656,
+    	south:25.053613662719727,
+    	east:121.54872131347656
+    }
+	];
     
     rectangle = new google.maps.Rectangle({
-        bounds:bounds,
+        bounds:bounds[0],
 		strokeColor: "#000",
         strokeOpacity: 1.0,
         strokeWeight: 1
 	});
 	
+	rectangle2 = new google.maps.Rectangle({
+        bounds:bounds[1],
+		strokeColor: "#000",
+        strokeOpacity: 1.0,
+        strokeWeight: 1
+	});
+	rectangle2.setMap(map);
+	
 	rectangle.population = 203132;
+	
+	
 	rectangle.setMap(map);
 	rectangle.addListener("mouseover",rectangle_mouseover);
 	rectangle.addListener("mouseout",rectangle_mouseout);
@@ -161,13 +147,20 @@ function initMap() {
  };
  
  function rectangle_click(event){
+     rectangle.setOptions({
+	     fillColor:"RGB(13,122,121)"
+	 });
+     rank = population_list.indexOf(rectangle.population);
+     pr = ((population_list.length - rank) / (population_list.length) * 100) + "%";
+	 console.log(pr)
      $("#test").text("");
      var html_str = "<label>人口</label>" ;
 	 html_str +=  '<div class="attr_bar">';
-	 html_str += '<div class="attr_str attr_value">';
-	 html_str += '<p>85%</p>';
+	 html_str += '<div class="attr_str attr_value"  style="width:' + pr + ';">';
+	 html_str += '<p>' + rectangle.population + '</p>';
 	 html_str += '</div>';
 	 html_str += '</div>';
+	 $(".attr_value").css("width",pr);
 	 $("#test").append(html_str);
 	 var test_str = "此區域的人口數是" + rectangle.population + "人";
 	 $("#test").append(test_str);
