@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>UBike可借還量地圖</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" rel="stylesheet">
+
+ <style>
+#map {
+ height: 90%;
+ width: 100%;
+ padding:0px;
+ margin:auto 0;
+}
+
+html,body{
+  height:100%;
+}
+.btn{
+  margin-top:5px;
+cursor:pointer;
+font-family:Microsoft JhengHei;
+}
+.head-banner{
+  background-color:#282c37;
+color:white;
+}
+	  
+.attr_bar{
+ width:80%;
+ background-color:RGB(166,166,166);
+}
+
+.attr_value{
+ width:50%;
+ background-color:RGB(166,166,166);
+}
+
+.attr_str{
+ text-align:right;
+ color:white;
+ background-color:rgb(13,122,121);
+}
+
+ </style> 
+ 
+</head>
+ 
+ 
+ 
+<body>
+
+<div class="container-fluid" style="height:100%">
+  <div class="row" style="height:100%">
+    <div class="col-md-12 head-banner" style="height:10%">
+       <label style="text-align:center">台北市Ubike可借還車輛數地圖</label>
+       <p id="update_time"></p>
+    </div>
+	
+	<div class="col-md-8 col-xs-12" id="map">
+    </div>
+    
+	<div class="col-md-4 col-xs-12">
+	  <div><input type="radio" name="aval" id="aval_rent" checked="true">顯示可借數量</div>
+	  <div><input type="radio" name="aval" id="aval_return">顯示可還數量</div>
+	  
+	  <div>
+	    <button class="btn btn-primary" onclick="initMap()"> 
+	      重新查詢
+	    </button>
+	  </div>
+	  
+	  <div>
+	    <button class="btn btn-primary" id="point" onclick="ChangeMapType(this)">
+	       標記圖
+	    </button>
+	    <button class="btn btn-primary" id="heat" onclick="ChangeMapType(this)">
+	       熱區圖
+	    </button>
+	  </div>
+	  
+	  <div id = "test">
+	      
+	  </div>
+	  
+	</div>
+  </div>
+</div> 
+ 
+<script>
+
+var map_type = "heat";
+var aval_rent ;
+
+function ChangeMapType(mtype){
+  switch (mtype.id){
+    case "heat" :
+    map_type = "heat";
+	 initMap();
+    break;
+    case "point" :
+    map_type = "point";
+	 initMap();
+    break;
+    case "classify" :
+    map_type = "classify";
+	 initMap();
+    break;
+  };
+};
+
+//////////////////google maps////////////////////////////
+var rectangle;
+var map;
+var infoWindow;
+
+function initMap() {
+
+    map = new google.maps.Map(document.getElementById('map'), {
+          zoom: 15,
+          center: {lat: 25.053613662719727, lng: 121.54872131347656}
+        });
+
+		
+    var bounds = {
+        north:25.053613662719727,
+    	west:121.53872131347656,
+    	south:25.043613662719727,
+    	east:121.54872131347656
+    };
+    
+    rectangle = new google.maps.Rectangle({
+        bounds:bounds,
+		strokeColor: "#000",
+        strokeOpacity: 1.0,
+        strokeWeight: 1
+	});
+	
+	rectangle.population = 203132;
+	rectangle.setMap(map);
+	rectangle.addListener("mouseover",rectangle_mouseover);
+	rectangle.addListener("mouseout",rectangle_mouseout);
+	rectangle.addListener("click",rectangle_click);
+	//infoWindow = new google.maps.InfoWindow();
+ };
+
+ function rectangle_mouseover(event){
+     rectangle.setOptions({
+	 strokeColor : "#FF0000",
+	 strokeWeight: 2
+	 });
+ };
+ 
+ function rectangle_mouseout(event){
+     rectangle.setOptions({
+	     strokeColor:"#000",
+		 strokeWeight: 1
+	 });
+ };
+ 
+ function rectangle_click(event){
+     $("#test").text("");
+     var html_str = "<label>人口</label>" ;
+	 html_str +=  '<div class="attr_bar">';
+	 html_str += '<div class="attr_str attr_value">';
+	 html_str += '<p>85%</p>';
+	 html_str += '</div>';
+	 html_str += '</div>';
+	 $("#test").append(html_str);
+	 var test_str = "此區域的人口數是" + rectangle.population + "人";
+	 $("#test").append(test_str);
+ };
+ 
+</script>
+
+<script src="https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js">
+</script>
+	
+<script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDW2R3JvnGX3WPGyv2NOH_TbprbOIFmBuc&libraries=visualization&callback=initMap">
+</script>
+
+</body>
+ 
+ 
+</html>
+ 
