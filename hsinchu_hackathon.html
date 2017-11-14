@@ -1,7 +1,8 @@
+
 <!DOCTYPE html>
 <html>
 <head>
-<title>UBike可借還量地圖</title>
+<title>新竹市產業發展潛力分析地圖</title>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
@@ -55,7 +56,7 @@ color:white;
 <div class="container-fluid" style="height:100%">
   <div class="row" style="height:100%">
     <div class="col-md-12 head-banner" style="height:10%">
-       <label style="text-align:center">台北市Ubike可借還車輛數地圖</label>
+       <label style="text-align:center">新竹市產業發展潛力分析地圖</label>
        <p id="update_time"></p>
     </div>
 	
@@ -79,11 +80,47 @@ color:white;
 var rectangle;
 var map;
 var infoWindow;
-var population_list = [1,3,203132,204452,20,12,23,2];
+var population_list = [];
 population_list = population_list.sort(function(a,b){return a-b});
 console.log(population_list);
 var rank;
 var pr;
+var jdata;
+var rec_object_list = [];
+$.ajax(
+   {
+     url:"https://togetherhoo.github.io/JS/hsinchu.json",
+     async: false,
+     type:"GET",
+     dataType: "json",
+     success: function(Adata){
+     jdata = Adata;
+	 },
+	 error:function(){
+     },
+    });
+
+/*
+jdata.features[0].geometry.coordinates[0][0][0] = 121.5387
+jdata.features[0].geometry.coordinates[0][0][1] = 25.0536
+
+jdata.features[0].geometry.coordinates[0][1][0] = 121.5487
+jdata.features[0].geometry.coordinates[0][1][1] = 25.0536
+
+jdata.features[0].geometry.coordinates[0][2][0] = 121.5487
+jdata.features[0].geometry.coordinates[0][2][1] = 25.0436
+
+jdata.features[0].geometry.coordinates[0][3][0] = 121.5387
+jdata.features[0].geometry.coordinates[0][3][1] = 25.0436
+
+*/
+
+console.log(jdata)
+
+console.log(jdata.features[0].geometry.coordinates[0][0][0]);
+console.log(jdata.features[0].geometry.coordinates[0][0][0]);
+console.log(jdata.features[0].geometry.coordinates[0][2][1]);
+console.log(jdata.features[0].geometry.coordinates[0][1][0]);
 
 function initMap() {
 
@@ -91,28 +128,37 @@ function initMap() {
           zoom: 15,
           center: {lat: 25.053613662719727, lng: 121.54872131347656}
         });
+//	map.data.loadGeoJson('https://togetherhoo.github.io/JS/hsinchu.json');	
+//	map.data.addListener("mouseover",rectangle_mouseover);
 		
+
     var bounds = [
 	{
-        north:25.053613662719727,
-    	west:121.53872131347656,
-    	south:25.043613662719727,
-    	east:121.54872131347656
+        north:jdata.features[0].geometry.coordinates[0][0][1],
+    	west: jdata.features[0].geometry.coordinates[0][0][0],
+    	south:jdata.features[0].geometry.coordinates[0][2][1],
+    	east:  jdata.features[0].geometry.coordinates[0][1][0]
     },
 	{
-        north:25.063613662719727,
-    	west:121.53872131347656,
-    	south:25.053613662719727,
-    	east:121.54872131347656
+        north:jdata.features[1].geometry.coordinates[0][0][1],
+    	west: jdata.features[1].geometry.coordinates[0][0][0],
+    	south:jdata.features[1].geometry.coordinates[0][2][1],
+    	east:  jdata.features[1].geometry.coordinates[0][1][0]
     }
 	];
-    
+/*    
     rectangle = new google.maps.Rectangle({
         bounds:bounds[0],
 		strokeColor: "#000",
         strokeOpacity: 1.0,
         strokeWeight: 1
 	});
+	rectangle.setMap(map);
+	//rectangle.population = jdata.features[0].properties.population;
+	//rectangle.households = jdata.features[0].properties.households;
+	//rectangle.addListener("mouseover",rectangle_mouseover);
+	//rectangle.addListener("mouseout",rectangle_mouseout);
+	//rectangle.addListener("click",rectangle_click);
 	
 	rectangle2 = new google.maps.Rectangle({
         bounds:bounds[1],
@@ -121,49 +167,75 @@ function initMap() {
         strokeWeight: 1
 	});
 	rectangle2.setMap(map);
-	
-	rectangle.population = 203132;
-	
-	
-	rectangle.setMap(map);
-	rectangle.addListener("mouseover",rectangle_mouseover);
-	rectangle.addListener("mouseout",rectangle_mouseout);
-	rectangle.addListener("click",rectangle_click);
+	//rectangle2.population = jdata.features[0].properties.population;
+	//rectangle2.households = jdata.features[0].properties.households;
+	//rectangle2.addListener("mouseover",rectangle_mouseover);
+	//rectangle2.addListener("mouseout",rectangle_mouseout);
+	//rectangle2.addListener("click",rectangle_click);
 	//infoWindow = new google.maps.InfoWindow();
- };
+*/
+    function createRectangle(boundary,pop,house) {
+    var rectangle = new google.maps.Rectangle({
+        bounds:boundary,
+		strokeColor: "#000",
+        strokeOpacity: 1.0,
+        strokeWeight: 1,
+		fillColor:"#000",
+		map:map
+	}); 
+	rec_object_list.push(rectangle);
+	
+	rectangle.population = pop;
+	rectangle.households = house;
+	
+	population_list.push(pop);
+	
+	google.maps.event.addListener(rectangle,"mouseover",function(){
+	    rectangle.setOptions({
+	        strokeColor : "#FF0000",
+	        strokeWeight: 2
+	    });
+	});
+	google.maps.event.addListener(rectangle,"mouseout",function(){
+	    rectangle.setOptions({
+	        strokeColor : "#000",
+	        strokeWeight: 1
+	    });
+	});
+    google.maps.event.addListener(rectangle, "click", function() { 
+        rec_object_list.forEach((val) => {
+		    val.setOptions({
+			    fillColor:"#000"
+			});
+		});
+		rectangle.setOptions({
+	        fillColor:"RGB(13,122,121)"
+	    });
+		
+		/*顯示圖表訊息*/
+		rank = population_list.indexOf(rectangle.population) + 1;
+        pr = ((population_list.length - rank) / (population_list.length) * 100) + "%";
+	    console.log(pr)
+        $("#test").text("");
+        var html_str = "<label>人口</label>" ;
+	    html_str +=  '<div class="attr_bar">';
+	    html_str += '<div class="attr_str attr_value"  style="width:' + pr + ';">';
+	    html_str += '<p>' + rectangle.population + '</p>';
+	    html_str += '</div>';
+	    html_str += '</div>';
+	    $(".attr_value").css("width",pr);
+	    $("#test").append(html_str);
+	    var test_str = "此區域的人口數是" + rectangle.population + "人";
+	    $("#test").append(test_str);
+		
+    });
+	
+    return rectangle;  
+    }
 
- function rectangle_mouseover(event){
-     rectangle.setOptions({
-	 strokeColor : "#FF0000",
-	 strokeWeight: 2
-	 });
- };
- 
- function rectangle_mouseout(event){
-     rectangle.setOptions({
-	     strokeColor:"#000",
-		 strokeWeight: 1
-	 });
- };
- 
- function rectangle_click(event){
-     rectangle.setOptions({
-	     fillColor:"RGB(13,122,121)"
-	 });
-     rank = population_list.indexOf(rectangle.population);
-     pr = ((population_list.length - rank) / (population_list.length) * 100) + "%";
-	 console.log(pr)
-     $("#test").text("");
-     var html_str = "<label>人口</label>" ;
-	 html_str +=  '<div class="attr_bar">';
-	 html_str += '<div class="attr_str attr_value"  style="width:' + pr + ';">';
-	 html_str += '<p>' + rectangle.population + '</p>';
-	 html_str += '</div>';
-	 html_str += '</div>';
-	 $(".attr_value").css("width",pr);
-	 $("#test").append(html_str);
-	 var test_str = "此區域的人口數是" + rectangle.population + "人";
-	 $("#test").append(test_str);
+rec1 = createRectangle(bounds[0],jdata.features[0].properties.population,jdata.features[0].properties.households);
+rec2 = createRectangle(bounds[1],jdata.features[1].properties.population,jdata.features[1].properties.households);
+	
  };
  
 </script>
@@ -179,4 +251,3 @@ function initMap() {
  
  
 </html>
- 
