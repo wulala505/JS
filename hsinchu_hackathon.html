@@ -68,6 +68,7 @@ background-color: RGB(247,243,198);
     
 	<div class="col-md-4 col-xs-12 right_panel">
 	  <div>
+	    <button class="btn btn-primary" onclick="changeMapType('cell')">區域發展潛力分析地圖</button>
 	    <button class="btn btn-primary" onclick="changeMapType('pop_heat')">全區人口熱區圖</button>
 	  </div>
 	  <div id = "test">
@@ -105,6 +106,12 @@ function changeMapType(mapType){
 	    case "pop_heat":
 		    map_type = "pop_heat";
 		    initMap();
+			$("#test").text("");
+		break;
+		case "cell":
+		    map_type = "cell";
+		    initMap();
+			$("#test").text("");
 		break;
 	};
 };
