@@ -290,7 +290,7 @@ function createMessage(rectangle){
     var sum_str = "";
 	sum_str = create_sum_str('人口',rectangle.population,population_list,sum_str,"人");
 	sum_str = create_sum_str('住宅數',rectangle.households,households_list,sum_str,"戶");
-	
+	$("#test").append(sum_str);
 	function create_html_str(attr_name,attribute,attribute_list,html_str){
 	    rank = attribute_list.indexOf(attribute) + 1;
         pr = Math.round(((attribute_list.length - rank) / (attribute_list.length) * 100));
@@ -306,7 +306,7 @@ function createMessage(rectangle){
 	    rank = attribute_list.indexOf(attribute) + 1;
         pr = Math.round(((attribute_list.length - rank) / (attribute_list.length) * 100));
 		sum_str += "此區域的" + attr_name + "是" + attribute + unit +"，PR值為" + pr + "。";
-		$("#test").append(sum_str);
+		
 		return sum_str;
 	};
 };
