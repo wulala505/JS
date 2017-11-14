@@ -81,15 +81,14 @@ var rectangle;
 var map;
 var infoWindow;
 var population_list = [];
-population_list = population_list.sort(function(a,b){return a-b});
-console.log(population_list);
 var rank;
 var pr;
 var jdata;
 var rec_object_list = [];
+var bounds=[];
 $.ajax(
    {
-     url:"https://togetherhoo.github.io/JS/hsinchu.json",
+     url:"https://togetherhoo.github.io/JS/hsinchucity_fishnet.json",
      async: false,
      type:"GET",
      dataType: "json",
@@ -100,86 +99,46 @@ $.ajax(
      },
     });
 
-/*
-jdata.features[0].geometry.coordinates[0][0][0] = 121.5387
-jdata.features[0].geometry.coordinates[0][0][1] = 25.0536
-
-jdata.features[0].geometry.coordinates[0][1][0] = 121.5487
-jdata.features[0].geometry.coordinates[0][1][1] = 25.0536
-
-jdata.features[0].geometry.coordinates[0][2][0] = 121.5487
-jdata.features[0].geometry.coordinates[0][2][1] = 25.0436
-
-jdata.features[0].geometry.coordinates[0][3][0] = 121.5387
-jdata.features[0].geometry.coordinates[0][3][1] = 25.0436
-
-*/
-
 console.log(jdata)
 
-console.log(jdata.features[0].geometry.coordinates[0][0][0]);
-console.log(jdata.features[0].geometry.coordinates[0][0][0]);
-console.log(jdata.features[0].geometry.coordinates[0][2][1]);
-console.log(jdata.features[0].geometry.coordinates[0][1][0]);
+//座標的排序不一定會照大小，所以先把所有經緯度分別抓到latlist和lonlist，再把兩個陣列由小到大排序，最後取第0個和第4個就會分別是最大和最小值
+for (var i=0;i < jdata.features.length; i++){
+    var latlist = [];
+	var lonlist = [];
+	for (var j=0;j<jdata.features[i].geometry.coordinates[0].length;j++){
+	    coord = jdata.features[i].geometry.coordinates[0][j]
+		latlist.push(coord[0]);
+		lonlist.push(coord[1]);
+	};
+	latlist = latlist.sort(function(a,b){return a-b});
+	lonlist = lonlist.sort(function(a,b){return a-b});
+	n = lonlist[4];
+	w = latlist[0];
+	s = lonlist[0];
+	e = latlist[4];
+	bound = {
+	    north:n,
+		west:w,
+		south:s,
+		east:e
+	};
+	bounds.push(bound);
+};
+//console.log("bounds",bounds);
 
 function initMap() {
 
     map = new google.maps.Map(document.getElementById('map'), {
-          zoom: 15,
-          center: {lat: 25.053613662719727, lng: 121.54872131347656}
+          zoom: 11,
+          center: {lat: jdata.features[0].geometry.coordinates[0][0][1], lng: jdata.features[0].geometry.coordinates[0][0][0]}
         });
-//	map.data.loadGeoJson('https://togetherhoo.github.io/JS/hsinchu.json');	
-//	map.data.addListener("mouseover",rectangle_mouseover);
-		
 
-    var bounds = [
-	{
-        north:jdata.features[0].geometry.coordinates[0][0][1],
-    	west: jdata.features[0].geometry.coordinates[0][0][0],
-    	south:jdata.features[0].geometry.coordinates[0][2][1],
-    	east:  jdata.features[0].geometry.coordinates[0][1][0]
-    },
-	{
-        north:jdata.features[1].geometry.coordinates[0][0][1],
-    	west: jdata.features[1].geometry.coordinates[0][0][0],
-    	south:jdata.features[1].geometry.coordinates[0][2][1],
-    	east:  jdata.features[1].geometry.coordinates[0][1][0]
-    }
-	];
-/*    
-    rectangle = new google.maps.Rectangle({
-        bounds:bounds[0],
-		strokeColor: "#000",
-        strokeOpacity: 1.0,
-        strokeWeight: 1
-	});
-	rectangle.setMap(map);
-	//rectangle.population = jdata.features[0].properties.population;
-	//rectangle.households = jdata.features[0].properties.households;
-	//rectangle.addListener("mouseover",rectangle_mouseover);
-	//rectangle.addListener("mouseout",rectangle_mouseout);
-	//rectangle.addListener("click",rectangle_click);
-	
-	rectangle2 = new google.maps.Rectangle({
-        bounds:bounds[1],
-		strokeColor: "#000",
-        strokeOpacity: 1.0,
-        strokeWeight: 1
-	});
-	rectangle2.setMap(map);
-	//rectangle2.population = jdata.features[0].properties.population;
-	//rectangle2.households = jdata.features[0].properties.households;
-	//rectangle2.addListener("mouseover",rectangle_mouseover);
-	//rectangle2.addListener("mouseout",rectangle_mouseout);
-	//rectangle2.addListener("click",rectangle_click);
-	//infoWindow = new google.maps.InfoWindow();
-*/
     function createRectangle(boundary,pop,house) {
     var rectangle = new google.maps.Rectangle({
         bounds:boundary,
 		strokeColor: "#000",
         strokeOpacity: 1.0,
-        strokeWeight: 1,
+        strokeWeight: 0.5,
 		fillColor:"#000",
 		map:map
 	}); 
@@ -189,6 +148,8 @@ function initMap() {
 	rectangle.households = house;
 	
 	population_list.push(pop);
+	population_list = population_list.sort(function(b,a){return a-b});
+    console.log(population_list);
 	
 	google.maps.event.addListener(rectangle,"mouseover",function(){
 	    rectangle.setOptions({
@@ -199,7 +160,7 @@ function initMap() {
 	google.maps.event.addListener(rectangle,"mouseout",function(){
 	    rectangle.setOptions({
 	        strokeColor : "#000",
-	        strokeWeight: 1
+	        strokeWeight: 0.5
 	    });
 	});
     google.maps.event.addListener(rectangle, "click", function() { 
@@ -212,10 +173,9 @@ function initMap() {
 	        fillColor:"RGB(13,122,121)"
 	    });
 		
-		/*顯示圖表訊息*/
+		//顯示圖表訊息
 		rank = population_list.indexOf(rectangle.population) + 1;
         pr = ((population_list.length - rank) / (population_list.length) * 100) + "%";
-	    console.log(pr)
         $("#test").text("");
         var html_str = "<label>人口</label>" ;
 	    html_str +=  '<div class="attr_bar">';
@@ -233,10 +193,19 @@ function initMap() {
     return rectangle;  
     }
 
-rec1 = createRectangle(bounds[0],jdata.features[0].properties.population,jdata.features[0].properties.households);
-rec2 = createRectangle(bounds[1],jdata.features[1].properties.population,jdata.features[1].properties.households);
+rec0 = createRectangle(bounds[0],jdata.features[0].properties.population,jdata.features[0].properties.households);
+rec1 = createRectangle(bounds[1],jdata.features[1].properties.population,jdata.features[1].properties.households);
+rec2 = createRectangle(bounds[2],jdata.features[2].properties.population,jdata.features[2].properties.households);
+rec3 = createRectangle(bounds[3],jdata.features[3].properties.population,jdata.features[3].properties.households);
+rec4 = createRectangle(bounds[4],jdata.features[4].properties.population,jdata.features[4].properties.households);
+rec5 = createRectangle(bounds[5],jdata.features[5].properties.population,jdata.features[5].properties.households);
+rec6 = createRectangle(bounds[6],jdata.features[6].properties.population,jdata.features[6].properties.households);
+rec7 = createRectangle(bounds[7],jdata.features[7].properties.population,jdata.features[7].properties.households);
+rec8 = createRectangle(bounds[8],jdata.features[8].properties.population,jdata.features[8].properties.households);
+rec9 = createRectangle(bounds[9],jdata.features[9].properties.population,jdata.features[9].properties.households);
 	
  };
+ 
  
 </script>
 
