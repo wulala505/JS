@@ -180,6 +180,36 @@ function initMap() {
 			rec_object_list.push(rectangle);
 	        rectangle.population = pop;
 	        rectangle.households = house;
+			
+			google.maps.event.addListener(rectangle,"mouseover",function(){
+	        rectangle.setOptions({
+	        strokeColor : "#FF0000",
+	        strokeWeight: 2,
+			fillOpacity:0.3
+	        });
+	        });
+	        google.maps.event.addListener(rectangle,"mouseout",function(){
+	            rectangle.setOptions({
+	                strokeColor : "#000",
+	                strokeWeight: 0.5,
+	        		fillOpacity:0.3
+	            });
+	        });
+            google.maps.event.addListener(rectangle, "click", function() { 
+                rec_object_list.forEach((val) => {
+	        	    val.setOptions({
+	        		    fillColor:"#000",
+	        			fillOpacity:0.3
+	        		});
+	        	});
+	        	rectangle.setOptions({
+	                fillColor:"RGB(246,197,85)",
+	        		fillOpacity:0.3
+	            });
+	        	
+	        	createMessage(rectangle);
+            });
+			
 			break;
 		case "pop_heat":
 		    var rectangle = new google.maps.Rectangle({
@@ -196,7 +226,6 @@ function initMap() {
 			rank = population_list.indexOf(rectangle.population) + 1;
 			console.log(rank);
             pr = Math.round(((population_list.length - rank) / (population_list.length) * 100));
-			//console.log("pr: ",pr);
 			if (pr >= 0 && pr < 14){
 			    rectangle.setOptions({
 				    fillColor:ingradient_colors[6]
@@ -238,35 +267,6 @@ function initMap() {
 			break;
 	};
 
-	google.maps.event.addListener(rectangle,"mouseover",function(){
-	    rectangle.setOptions({
-	        strokeColor : "#FF0000",
-	        strokeWeight: 2,
-			fillOpacity:0.3
-	    });
-	});
-	google.maps.event.addListener(rectangle,"mouseout",function(){
-	    rectangle.setOptions({
-	        strokeColor : "#000",
-	        strokeWeight: 0.5,
-			fillOpacity:0.3
-	    });
-	});
-    google.maps.event.addListener(rectangle, "click", function() { 
-        rec_object_list.forEach((val) => {
-		    val.setOptions({
-			    fillColor:"#000",
-				fillOpacity:0.3
-			});
-		});
-		rectangle.setOptions({
-	        fillColor:"RGB(246,197,85)",
-			fillOpacity:0.3
-	    });
-		
-		createMessage(rectangle);
-    });
-	
     return rectangle;  
     }
 
