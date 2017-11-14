@@ -81,6 +81,7 @@ var rectangle;
 var map;
 var infoWindow;
 var population_list = [];
+var households_list = [];
 var rank;
 var pr;
 var jdata;
@@ -131,175 +132,7 @@ function initMap() {
     map = new google.maps.Map(document.getElementById('map'), {
           zoom: 11,
           center: {lat: jdata.features[0].geometry.coordinates[0][0][1], lng: jdata.features[0].geometry.coordinates[0][0][0]},
-		  styles:[
-  {
-    "elementType": "geometry",
-    "stylers": [
-      {
-        "color": "#f5f5f5"
-      }
-    ]
-  },
-  {
-    "elementType": "labels.icon",
-    "stylers": [
-      {
-        "visibility": "off"
-      }
-    ]
-  },
-  {
-    "elementType": "labels.text.fill",
-    "stylers": [
-      {
-        "color": "#616161"
-      }
-    ]
-  },
-  {
-    "elementType": "labels.text.stroke",
-    "stylers": [
-      {
-        "color": "#f5f5f5"
-      }
-    ]
-  },
-  {
-    "featureType": "administrative.land_parcel",
-    "elementType": "labels.text.fill",
-    "stylers": [
-      {
-        "color": "#bdbdbd"
-      }
-    ]
-  },
-  {
-    "featureType": "poi",
-    "elementType": "geometry",
-    "stylers": [
-      {
-        "color": "#eeeeee"
-      }
-    ]
-  },
-  {
-    "featureType": "poi",
-    "elementType": "labels.text.fill",
-    "stylers": [
-      {
-        "color": "#757575"
-      }
-    ]
-  },
-  {
-    "featureType": "poi.park",
-    "elementType": "geometry",
-    "stylers": [
-      {
-        "color": "#e5e5e5"
-      }
-    ]
-  },
-  {
-    "featureType": "poi.park",
-    "elementType": "labels.text.fill",
-    "stylers": [
-      {
-        "color": "#9e9e9e"
-      }
-    ]
-  },
-  {
-    "featureType": "road",
-    "elementType": "geometry",
-    "stylers": [
-      {
-        "color": "#ffffff"
-      }
-    ]
-  },
-  {
-    "featureType": "road.arterial",
-    "elementType": "labels.text.fill",
-    "stylers": [
-      {
-        "color": "#757575"
-      }
-    ]
-  },
-  {
-    "featureType": "road.highway",
-    "elementType": "geometry",
-    "stylers": [
-      {
-        "color": "#dadada"
-      }
-    ]
-  },
-  {
-    "featureType": "road.highway",
-    "elementType": "labels.text.fill",
-    "stylers": [
-      {
-        "color": "#616161"
-      }
-    ]
-  },
-  {
-    "featureType": "road.local",
-    "elementType": "labels.text.fill",
-    "stylers": [
-      {
-        "color": "#9e9e9e"
-      }
-    ]
-  },
-  {
-    "featureType": "transit.line",
-    "elementType": "geometry",
-    "stylers": [
-      {
-        "color": "#e5e5e5"
-      }
-    ]
-  },
-  {
-    "featureType": "transit.station",
-    "elementType": "geometry",
-    "stylers": [
-      {
-        "color": "#eeeeee"
-      }
-    ]
-  },
-  {
-    "featureType": "water",
-    "elementType": "geometry",
-    "stylers": [
-      {
-        "color": "#c9c9c9"
-      }
-    ]
-  },
-  {
-    "featureType": "water",
-    "elementType": "geometry.fill",
-    "stylers": [
-      {
-        "color": "#63cfd8"
-      }
-    ]
-  },
-  {
-    "featureType": "water",
-    "elementType": "labels.text.fill",
-    "stylers": [
-      {
-        "color": "#9e9e9e"
-      }
-    ]
-  }
-]
+		  styles:map_style_json
         });
 
     function createRectangle(boundary,pop,house) {
@@ -318,7 +151,8 @@ function initMap() {
 	
 	population_list.push(pop);
 	population_list = population_list.sort(function(b,a){return a-b});
-    console.log(population_list);
+	households_list.push(house);
+	households_list = households_list.sort(function(b,a){return a-b});
 	
 	google.maps.event.addListener(rectangle,"mouseover",function(){
 	    rectangle.setOptions({
@@ -339,29 +173,39 @@ function initMap() {
 			});
 		});
 		rectangle.setOptions({
-	        fillColor:"RGB(13,122,121)"
+	        fillColor:"RGB(246,197,85)"
 	    });
 		
-		//顯示圖表訊息
-		rank = population_list.indexOf(rectangle.population) + 1;
-        pr = ((population_list.length - rank) / (population_list.length) * 100) + "%";
-        $("#test").text("");
-        var html_str = "<label>人口</label>" ;
-	    html_str +=  '<div class="attr_bar">';
-	    html_str += '<div class="attr_str attr_value"  style="width:' + pr + ';">';
-	    html_str += '<p>' + rectangle.population + '</p>';
-	    html_str += '</div>';
-	    html_str += '</div>';
-	    $(".attr_value").css("width",pr);
-	    $("#test").append(html_str);
-	    var test_str = "此區域的人口數是" + rectangle.population + "人";
-	    $("#test").append(test_str);
-		
+		createMessage(rectangle);
     });
 	
     return rectangle;  
     }
 
+createRecs();
+
+console.log(population_list);
+
+function createMessage(rectangle){
+    rank = population_list.indexOf(rectangle.population) + 1;
+    pr = Math.round(((population_list.length - rank) / (population_list.length) * 100));
+	$("#test").text("");
+    var html_str = "<label>人口</label>" ;
+    html_str +=  '<div class="attr_bar">';
+    html_str += '<div class="attr_str attr_value"  style="width:' + pr + "%" + ';">';
+    html_str += '<p>' + rectangle.population + '</p>';
+    html_str += '</div>';
+    html_str += '</div>';
+
+    $(".attr_value").css("width",pr);
+    $("#test").append(html_str);
+    var test_str = "此區域的人口數是" + rectangle.population + "人，PR值為" + pr + "。";
+    $("#test").append(test_str);
+		
+};
+
+
+function createRecs(){
 rec0 = createRectangle(bounds[0],jdata.features[0].properties.population,jdata.features[0].properties.households);
 rec1 = createRectangle(bounds[1],jdata.features[1].properties.population,jdata.features[1].properties.households);
 rec2 = createRectangle(bounds[2],jdata.features[2].properties.population,jdata.features[2].properties.households);
@@ -557,9 +401,178 @@ rec191 = createRectangle(bounds[191],jdata.features[191].properties.population,j
 rec192 = createRectangle(bounds[192],jdata.features[192].properties.population,jdata.features[192].properties.households);
 rec193 = createRectangle(bounds[193],jdata.features[193].properties.population,jdata.features[193].properties.households);
 rec194 = createRectangle(bounds[194],jdata.features[194].properties.population,jdata.features[194].properties.households);
-	
- };
+};
+};
  
+ 
+ map_style_json =  [ {
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "color": "#f5f5f5"
+      }
+    ]
+  },
+  {
+    "elementType": "labels.icon",
+    "stylers": [
+      {
+        "visibility": "off"
+      }
+    ]
+  },
+  {
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#616161"
+      }
+    ]
+  },
+  {
+    "elementType": "labels.text.stroke",
+    "stylers": [
+      {
+        "color": "#f5f5f5"
+      }
+    ]
+  },
+  {
+    "featureType": "administrative.land_parcel",
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#bdbdbd"
+      }
+    ]
+  },
+  {
+    "featureType": "poi",
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "color": "#eeeeee"
+      }
+    ]
+  },
+  {
+    "featureType": "poi",
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#757575"
+      }
+    ]
+  },
+  {
+    "featureType": "poi.park",
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "color": "#e5e5e5"
+      }
+    ]
+  },
+  {
+    "featureType": "poi.park",
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#9e9e9e"
+      }
+    ]
+  },
+  {
+    "featureType": "road",
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "color": "#ffffff"
+      }
+    ]
+  },
+  {
+    "featureType": "road.arterial",
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#757575"
+      }
+    ]
+  },
+  {
+    "featureType": "road.highway",
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "color": "#dadada"
+      }
+    ]
+  },
+  {
+    "featureType": "road.highway",
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#616161"
+      }
+    ]
+  },
+  {
+    "featureType": "road.local",
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#9e9e9e"
+      }
+    ]
+  },
+  {
+    "featureType": "transit.line",
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "color": "#e5e5e5"
+      }
+    ]
+  },
+  {
+    "featureType": "transit.station",
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "color": "#eeeeee"
+      }
+    ]
+  },
+  {
+    "featureType": "water",
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "color": "#c9c9c9"
+      }
+    ]
+  },
+  {
+    "featureType": "water",
+    "elementType": "geometry.fill",
+    "stylers": [
+      {
+        "color": "#63cfd8"
+      }
+    ]
+  },
+  {
+    "featureType": "water",
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#9e9e9e"
+      }
+    ]
+  }
+];
  
 </script>
 
