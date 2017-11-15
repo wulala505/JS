@@ -35,7 +35,6 @@ color:white;
 }
 
 .attr_value{
- width:80%;
  background-color:RGB(111,203,218);
 }
 
@@ -68,8 +67,8 @@ background-color: RGB(247,243,198);
     
 	<div class="col-md-4 col-xs-12 right_panel">
 	  <div>
-	    <button class="btn btn-primary" onclick="changeMapType('cell')">區域發展潛力分析地圖</button>
-	    <button class="btn btn-primary" onclick="changeMapType('pop_heat')">全區人口熱區圖</button>
+	    <button class="btn btn-primary" onclick="initMap()">區域發展潛力分析地圖</button>
+	    <div class="btn btn-primary" onclick="pop_heat_map()">全區人口熱區圖</div>
 	  </div>
 	  <div id = "test">
 	      
@@ -85,6 +84,8 @@ background-color: RGB(247,243,198);
 //////////////////google maps////////////////////////////
 var rectangle;
 var map;
+var population_list;
+var households_list;
 //var infoWindow;
 var rank;
 var pr;
@@ -100,34 +101,18 @@ var ingradient_colors = [
 	"RGB(127,146,174)",
 	"RGB(68,100,160)"
 	];
-var map_type = "cell";
-function changeMapType(mapType){
-    switch(mapType){
-	    case "pop_heat":
-		    map_type = "pop_heat";
-		    initMap();
-			$("#test").text("");
-		break;
-		case "cell":
-		    map_type = "cell";
-		    initMap();
-			$("#test").text("");
-		break;
-	};
-};
 
-$.ajax(
-   {
+$.ajax({
      url:"https://togetherhoo.github.io/JS/hsinchucity_fishnet.json",
      async: false,
      type:"GET",
      dataType: "json",
      success: function(Adata){
-     jdata = Adata;
+         jdata = Adata;
 	 },
 	 error:function(){
      },
-    });
+});
 
 console.log(jdata)
 
@@ -154,11 +139,11 @@ for (var i=0;i < jdata.features.length; i++){
 	};
 	bounds.push(bound);
 };
-//console.log("bounds",bounds);
 
+///////////////////////////////////Start of initMap()//////////////////////////////////////
 function initMap() {
-    var population_list = [];
-    var households_list = [];
+    population_list = [];
+    households_list = [];
 	for (var i=0;i < jdata.features.length; i++){
 	    population_list.push(jdata.features[i].properties.population);
 		households_list.push(jdata.features[i].properties.households);
@@ -173,130 +158,98 @@ function initMap() {
         });
 
     function createRectangle(boundary,pop,house) {
-    
-	switch(map_type){
-	    case "cell":
-		    var rectangle = new google.maps.Rectangle({
-                bounds:boundary,
-		        strokeColor: "#000",
-                strokeOpacity: 1.0,
-                strokeWeight: 0.5,
-		        fillColor:"#000",
-		        map:map
-	        });
-			rec_object_list.push(rectangle);
-	        rectangle.population = pop;
-	        rectangle.households = house;
-			
-			google.maps.event.addListener(rectangle,"mouseover",function(){
+		var rectangle = new google.maps.Rectangle({
+            bounds:boundary,
+		    strokeColor: "#000",
+            strokeOpacity: 1.0,
+            strokeWeight: 0.5,
+		    fillColor:"#000",
+		    map:map
+	    });
+		rec_object_list.push(rectangle);
+	    rectangle.population = pop;
+	    rectangle.households = house;
+		
+		google.maps.event.addListener(rectangle,"mouseover",function(){
+	    rectangle.setOptions({
+	    strokeColor : "#FF0000",
+	    strokeWeight: 2,
+		fillOpacity:0.3
+	    });
+	    });
+	    google.maps.event.addListener(rectangle,"mouseout",function(){
 	        rectangle.setOptions({
-	        strokeColor : "#FF0000",
-	        strokeWeight: 2,
-			fillOpacity:0.3
+	            strokeColor : "#000",
+	            strokeWeight: 0.5,
+	    		fillOpacity:0.3
 	        });
+	    });
+        google.maps.event.addListener(rectangle, "click", function() { 
+            rec_object_list.forEach((val) => {
+	    	    val.setOptions({
+	    		    fillColor:"#000",
+	    			fillOpacity:0.3
+	    		});
+	    	});
+	    	rectangle.setOptions({
+	            fillColor:"RGB(246,197,85)",
+	    		fillOpacity:0.3
 	        });
-	        google.maps.event.addListener(rectangle,"mouseout",function(){
-	            rectangle.setOptions({
-	                strokeColor : "#000",
-	                strokeWeight: 0.5,
-	        		fillOpacity:0.3
-	            });
-	        });
-            google.maps.event.addListener(rectangle, "click", function() { 
-                rec_object_list.forEach((val) => {
-	        	    val.setOptions({
-	        		    fillColor:"#000",
-	        			fillOpacity:0.3
-	        		});
-	        	});
-	        	rectangle.setOptions({
-	                fillColor:"RGB(246,197,85)",
-	        		fillOpacity:0.3
-	            });
-	        	
-	        	createMessage(rectangle);
-            });
-			
-			break;
-		case "pop_heat":
-		    var rectangle = new google.maps.Rectangle({
-                bounds:boundary,
-		        strokeColor: "#000",
-                strokeOpacity: 1.0,
-                strokeWeight: 0.5,
-		        fillColor:"#000",
-		        map:map
-	        });
-			rec_object_list.push(rectangle);
-	        rectangle.population = pop;
-	        rectangle.households = house;
-			rank = population_list.indexOf(rectangle.population) + 1;
-			console.log(rank);
-            pr = Math.round(((population_list.length - rank) / (population_list.length) * 100));
-			if (pr >= 0 && pr < 14){
-			    rectangle.setOptions({
-				    fillColor:ingradient_colors[6]
-				});
-			}
-			else if (pr >= 14 && pr < 28){
-			    rectangle.setOptions({
-				    fillColor:ingradient_colors[5]
-				});
-			}
-			else if (pr >= 28 && pr < 42){
-			    rectangle.setOptions({
-				    fillColor:ingradient_colors[4]
-				});
-			}
-			else if (pr >= 42 && pr < 56){
-			    rectangle.setOptions({
-				    fillColor:ingradient_colors[3]
-				});
-			}
-			else if (pr >= 56 && pr < 70){
-			    rectangle.setOptions({
-				    fillColor:ingradient_colors[2]
-				});
-			}
-			else if (pr >= 70 && pr < 86){
-			    rectangle.setOptions({
-				    fillColor:ingradient_colors[1]
-				});
-			}
-			else if (pr >= 86){
-			    rectangle.setOptions({
-				    fillColor:ingradient_colors[0],
-				});
-			}
-			rectangle.setOptions({
-				fillOpacity:0.8
-			});
-			break;
-	};
-
+	    	
+	    	createMessage(rectangle);
+        });
     return rectangle;  
     }
 
 createRecs();
-
+				
 function createMessage(rectangle){
-
+    var pr_json = [['pop_bar',0],['house_bar',0]];
     var html_str = "";
-    html_str = create_html_str('人口',rectangle.population,population_list,html_str);
-	html_str = create_html_str('住宅數',rectangle.households,households_list,html_str);
+    html_str = create_html_str('pop_bar','人口',rectangle.population,population_list,html_str);
+	html_str = create_html_str('house_bar','住宅數',rectangle.households,households_list,html_str);
 	$("#test").text("");
     $("#test").append(html_str);
+	
+	for (var i=0;i<pr_json.length;i++ ){
+			myMove(pr_json[i][0],pr_json[i][1]);
+	    };
+
+    function myMove(elem_id,max_width) {
+      var elem = document.getElementById(elem_id);	
+      var bar_width = 0;
+      var id = setInterval(frame, 5);
+      function frame() {
+	    if (max_width == 0){
+		    elem.style.width = '1%';
+		}
+		else{
+            if (bar_width == max_width) {
+              clearInterval(id);
+            } else {
+              bar_width++; 
+              elem.style.width = bar_width + '%'; 
+            }
+		}
+      }
+    }
     
     var sum_str = "";
 	sum_str = create_sum_str('人口',rectangle.population,population_list,sum_str,"人");
 	sum_str = create_sum_str('住宅數',rectangle.households,households_list,sum_str,"戶");
 	$("#test").append(sum_str);
-	function create_html_str(attr_name,attribute,attribute_list,html_str){
+	
+	function create_html_str(bar_id,attr_name,attribute,attribute_list,html_str){
 	    rank = attribute_list.indexOf(attribute) + 1;
         pr = Math.round(((attribute_list.length - rank) / (attribute_list.length) * 100));
-	    html_str +=  '<label>' + attr_name + '</label>' ;
+		for (var i=0;i<pr_json.length;i++ ){
+		    if(pr_json[i][0] == bar_id){
+			    pr_json[i][1] = pr;
+			};
+	    };
+		html_str +=  '<label>' + attr_name + '</label>' ;
         html_str +=  '<div class="attr_bar">';
-        html_str += '<div class="attr_str attr_value"  style="width:' + pr + "%" + ';">';
+        html_str += '<div class="attr_str attr_value" ' + 'id="' + bar_id + '">';
         html_str += '<p>' + attribute + '</p>';
         html_str += '</div>';
         html_str += '</div>';
@@ -306,7 +259,6 @@ function createMessage(rectangle){
 	    rank = attribute_list.indexOf(attribute) + 1;
         pr = Math.round(((attribute_list.length - rank) / (attribute_list.length) * 100));
 		sum_str += "此區域的" + attr_name + "是" + attribute + unit +"，PR值為" + pr + "。";
-		
 		return sum_str;
 	};
 };
@@ -508,6 +460,53 @@ rec192 = createRectangle(bounds[192],jdata.features[192].properties.population,j
 rec193 = createRectangle(bounds[193],jdata.features[193].properties.population,jdata.features[193].properties.households);
 rec194 = createRectangle(bounds[194],jdata.features[194].properties.population,jdata.features[194].properties.households);
 };
+};
+///////////////////////////////////End of initMap()////////////////////////////////////// 
+ 
+function pop_heat_map(){
+    rec_object_list.forEach((rec) => {
+	    google.maps.event.clearInstanceListeners(rec); //移除事件
+	    rank = population_list.indexOf(rec.population) + 1;
+        pr = Math.round(((population_list.length - rank) / (population_list.length) * 100));
+		if (pr >= 0 && pr < 14){
+		    rec.setOptions({
+			    fillColor:ingradient_colors[6]
+			});
+		}
+		else if (pr >= 14 && pr < 28){
+		    rec.setOptions({
+			    fillColor:ingradient_colors[5]
+			});
+		}
+		else if (pr >= 28 && pr < 42){
+		    rec.setOptions({
+			    fillColor:ingradient_colors[4]
+			});
+		}
+		else if (pr >= 42 && pr < 56){
+		    rec.setOptions({
+			    fillColor:ingradient_colors[3]
+			});
+		}
+		else if (pr >= 56 && pr < 70){
+		    rec.setOptions({
+			    fillColor:ingradient_colors[2]
+			});
+		}
+		else if (pr >= 70 && pr < 86){
+		    rec.setOptions({
+			    fillColor:ingradient_colors[1]
+			});
+		}
+		else if (pr >= 86){
+		    rec.setOptions({
+			    fillColor:ingradient_colors[0],
+			});
+		}
+		rec.setOptions({
+			fillOpacity:0.8
+		});
+	});
 };
  
  map_style_json =  [ {
