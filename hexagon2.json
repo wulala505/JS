@@ -44,7 +44,10 @@
         "households": 768.645930036,
         "main1990": "A101",
         "main1991": "A101",
-        "main1992": "A103"
+        "main1992": "A103",
+        "main1990value": 67,
+        "main1991value": 67,
+        "main1992value": 50
       }
     },
     {
@@ -90,7 +93,10 @@
         "households": 653.777302458,
         "main1990": "A102",
         "main1991": "A101",
-        "main1992": "A103"
+        "main1992": "A103",
+        "main1990value": 55,
+        "main1991value": 55,
+        "main1992value": 51
       }
     },
     {
@@ -136,7 +142,10 @@
         "households": 300.045196682,
         "main1990": "A102",
         "main1991": "A102",
-        "main1992": "A103"
+        "main1992": "A103",
+        "main1990value": 45,
+        "main1991value": 56,
+        "main1992value": 54
       }
     },
     {
@@ -182,7 +191,10 @@
         "households": 46.3631671574,
         "main1990": "A102",
         "main1991": "A102",
-        "main1992": "A104"
+        "main1992": "A104",
+        "main1990value": 36,
+        "main1991value": 58,
+        "main1992value": 68
       }
     },
     {
@@ -228,7 +240,10 @@
         "households": 144.651183913,
         "main1990": "A102",
         "main1991": "A103",
-        "main1992": "A103"
+        "main1992": "A103",
+        "main1990value": 57,
+        "main1991value": 73,
+        "main1992value": 69
       }
     },
     {
@@ -274,7 +289,10 @@
         "households": 293.561396533,
         "main1990": "A101",
         "main1991": "A101",
-        "main1992": "A104"
+        "main1992": "A104",
+        "main1990value": 58,
+        "main1991value": 76,
+        "main1992value": 70
       }
     },
     {
@@ -320,7 +338,10 @@
         "households": 447.829524227,
         "main1990": "A103",
         "main1991": "A103",
-        "main1992": "A103"
+        "main1992": "A103",
+        "main1990value": 87,
+        "main1991value": 79,
+        "main1992value": 74
       }
     },
     {
@@ -366,7 +387,10 @@
         "households": 507.628081836,
         "main1990": "A103",
         "main1991": "A102",
-        "main1992": "A104"
+        "main1992": "A104",
+        "main1990value": 89,
+        "main1991value": 47,
+        "main1992value": 75
       }
     },
     {
@@ -412,7 +436,10 @@
         "households": 409.864077567,
         "main1990": "A103",
         "main1991": "A103",
-        "main1992": "A103"
+        "main1992": "A103",
+        "main1990value": 75,
+        "main1991value": 69,
+        "main1992value": 63
       }
     },
     {
@@ -458,7 +485,10 @@
         "households": 959.321093381,
         "main1990": "A101",
         "main1991": "A101",
-        "main1992": "A104"
+        "main1992": "A104",
+        "main1990value": 64,
+        "main1991value": 88,
+        "main1992value": 59
       }
     },
     {
@@ -504,7 +534,10 @@
         "households": 767.722636663,
         "main1990": "A102",
         "main1991": "A103",
-        "main1992": "A103"
+        "main1992": "A103",
+        "main1990value": 65,
+        "main1991value": 75,
+        "main1992value": 57
       }
     },
     {
@@ -550,7 +583,10 @@
         "households": 256.753939307,
         "main1990": "A102",
         "main1991": "A103",
-        "main1992": "A103"
+        "main1992": "A103",
+        "main1990value": 66,
+        "main1991value": 60,
+        "main1992value": 56
       }
     },
     {
@@ -596,7 +632,10 @@
         "households": 490.496418322,
         "main1990": "A104",
         "main1991": "A103",
-        "main1992": "A103"
+        "main1992": "A103",
+        "main1990value": 67,
+        "main1991value": 50,
+        "main1992value": 50
       }
     },
     {
@@ -642,7 +681,10 @@
         "households": 275.774878082,
         "main1990": "A101",
         "main1991": "A101",
-        "main1992": "A104"
+        "main1992": "A104",
+        "main1990value": 45,
+        "main1991value": 53,
+        "main1992value": 53
       }
     },
     {
@@ -688,7 +730,10 @@
         "households": 982.609191645,
         "main1990": "A104",
         "main1991": "A101",
-        "main1992": "A102"
+        "main1992": "A102",
+        "main1990value": 46,
+        "main1991value": 52,
+        "main1992value": 67
       }
     },
     {
@@ -734,7 +779,10 @@
         "households": 418.343382123,
         "main1990": "A101",
         "main1991": "A103",
-        "main1992": "A104"
+        "main1992": "A104",
+        "main1990value": 55,
+        "main1991value": 58,
+        "main1992value": 76
       }
     },
     {
@@ -780,7 +828,10 @@
         "households": 588.933524206,
         "main1990": "A104",
         "main1991": "A103",
-        "main1992": "A104"
+        "main1992": "A104",
+        "main1990value": 50,
+        "main1991value": 54,
+        "main1992value": 74
       }
     },
     {
@@ -826,7 +877,10 @@
         "households": 290.034830694,
         "main1990": "A104",
         "main1991": "A103",
-        "main1992": "A102"
+        "main1992": "A102",
+        "main1990value": 59,
+        "main1991value": 61,
+        "main1992value": 69
       }
     },
     {
@@ -872,7 +926,10 @@
         "households": 736.584041153,
         "main1990": "A103",
         "main1991": "A103",
-        "main1992": "A102"
+        "main1992": "A102",
+        "main1990value": 87,
+        "main1991value": 62,
+        "main1992value": 68
       }
     },
     {
@@ -918,7 +975,10 @@
         "households": 250.848606302,
         "main1990": "A104",
         "main1991": "A102",
-        "main1992": "A102"
+        "main1992": "A102",
+        "main1990value": 90,
+        "main1991value": 53,
+        "main1992value": 80
       }
     },
     {
@@ -964,7 +1024,10 @@
         "households": 703.521664683,
         "main1990": "A104",
         "main1991": "A101",
-        "main1992": "A102"
+        "main1992": "A102",
+        "main1990value": 61,
+        "main1991value": 90,
+        "main1992value": 82
       }
     },
     {
@@ -1010,7 +1073,10 @@
         "households": 69.1644243803,
         "main1990": "A104",
         "main1991": "A101",
-        "main1992": "A101"
+        "main1992": "A101",
+        "main1990value": 73,
+        "main1991value": 87,
+        "main1992value": 67
       }
     },
     {
@@ -1056,7 +1122,10 @@
         "households": 825.475577465,
         "main1990": "A103",
         "main1991": "A102",
-        "main1992": "A101"
+        "main1992": "A101",
+        "main1990value": 87,
+        "main1991value": 78,
+        "main1992value": 64
       }
     },
     {
@@ -1102,7 +1171,10 @@
         "households": 994.415690623,
         "main1990": "A104",
         "main1991": "A102",
-        "main1992": "A101"
+        "main1992": "A101",
+        "main1990value": 78,
+        "main1991value": 73,
+        "main1992value": 53
       }
     },
     {
@@ -1148,7 +1220,10 @@
         "households": 541.242249913,
         "main1990": "A103",
         "main1991": "A101",
-        "main1992": "A101"
+        "main1992": "A101",
+        "main1990value": 79,
+        "main1991value": 76,
+        "main1992value": 50
       }
     },
     {
@@ -1194,7 +1269,10 @@
         "households": 376.907058251,
         "main1990": "A103",
         "main1991": "A102",
-        "main1992": "A101"
+        "main1992": "A101",
+        "main1990value": 64,
+        "main1991value": 56,
+        "main1992value": 67
       }
     },
     {
@@ -1240,7 +1318,10 @@
         "households": 568.23288629,
         "main1990": "A104",
         "main1991": "A102",
-        "main1992": "A102"
+        "main1992": "A102",
+        "main1990value": 88,
+        "main1991value": 51,
+        "main1992value": 89
       }
     }
   ]
