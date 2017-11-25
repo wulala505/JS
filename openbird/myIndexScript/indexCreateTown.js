@@ -438,7 +438,7 @@ function createInfo(rectangle){
 			info_str +=      '<div class="col-md-6">' + '無店家歇業';
 		}
 		else{
-		    info_str +=      '<div class="col-md-6">' + rectangle.properties[ basicValue[i] ];
+		    info_str +=      '<div class="col-md-6">' + rectangle.properties[ basicValue[i] ].toFixed(2);
 	    }
 		info_str +=      '</div>';
 	    info_str +=    '</div>';
