@@ -484,7 +484,7 @@ function stat_info(propertyChar,propertyValue,maxValue,meanValue){
 	var stat_info_str="";
 	stat_info_str += '<div>';
 	//stat_info_str += '<div>' + propertyChar + '</br>';
-	stat_info_str += '平均值: ' + meanValue.toFixed(2) + '</br>';
+	//stat_info_str += '平均值: ' + meanValue.toFixed(2) + '</br>';
 	stat_info_str += '此網格: ' + propertyValue.toFixed(2) + '</br>';
 	stat_info_str += '最大值: ' + maxValue.toFixed(2) + '</br>';
 	stat_info_str += '</div>'
