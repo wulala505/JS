@@ -344,6 +344,7 @@ function createRecs(mape_type,map){
 			right_rectangle_list.push(right_rectangle);
 			//////////////////End setting right map////////////////////
 			createInfo(rectangle);
+			console.log("this rectangle: ",rectangle);
 			//d3_horiaon_bar();
 			
 			
@@ -428,7 +429,7 @@ function createInfo(rectangle){
 	        };
 		
         info_str = "";
-	    info_str +=  '<div class="bar_base_div" onclick="stat_info(propertyChar' + ',' + propertyValue + ',' + maxValue + ',' + meanValue + ')">';
+	    info_str +=  '<div class="bar_base_div"' + 'id="base_' + basicValue[i] + '" ' +  ' onclick="stat_info(this,propertyChar' + ',' + propertyValue + ',' + maxValue + ',' + meanValue + ')">';
 	    info_str +=    '<div class="col-md-3">' + property_chinese[ basicValue[i] ] + '</div>' ;
 	    info_str +=    '<div class="col-md-9" style="padding-left:5px;">';
 	    info_str +=      '<div class="col-md-6">';
@@ -478,8 +479,13 @@ function createInfo(rectangle){
 };
 
 
-function stat_info(propertyChar,propertyValue,maxValue,meanValue){
+function stat_info(e,propertyChar,propertyValue,maxValue,meanValue){
 	$("#right-map-stat-info").text("");
+	$(".bar_base_div").css("color","black");
+	var this_id = "#" + e.id;
+	$(this_id).css("color","RGB(255, 99, 132)");
+	console.log($(this_id).children("#id_period_mea").innerHTML);
+	console.log($(this_id).innerHTML);
 	//console.log("propertyChar: ",propertyChar);
 	var stat_info_str="";
 	stat_info_str += '<div>';
