@@ -1,1 +1,1 @@
-網站 : coming soon !
+網站 : https://togetherhoo.github.io/JS/hsinchuOpenbird/index.html

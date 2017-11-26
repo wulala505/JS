@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+  <link href="cssKU/hsinchuMapKU.css" rel="stylesheet">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+  <script type="text/javascript" src="myScript/Chart.bundle.js"></script>
+  <script type="text/javascript" src="myScript/util.js"></script>
+  <link href="css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-beta.2/css/bootstrap.css">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <meta charset ="UTF-8">
+  <title>新竹市產業發展潛力分析地圖</title>
+  
+  <script src="https://d3js.org/d3.v4.min.js"></script>
+  <script src="myIndexScript/indexCreateTown.js"></script>
+  <script src="myIndexScript/index_get_geojson_data.js"></script>
+  
+  <style>
+  .tableauPlaceholder{
+    width:30%;
+	height:500px;
+  }
+  </style>
+  
+</head>
+
+
+<body>
+	<div class="nav_item" >
+
+			<div class="topnav" id="myTopnav">
+
+			  <a href="javascript:void(0);" style="font-size:14px;" class="icon" onclick="responsive_navtap()">&#9776;</a>
+			  
+			  <a href="index.html" >首頁</a>
+			  
+			 <a href="hexagon.html">網格屬性</a>
+
+             <a href="potential.html">區域屬性</a>
+
+             <a href="yearly.html">時序變化</a>
+
+			  
+
+			</div>
+
+	</div> 
+	
+	
+	<div class="part" onmousemove="disappear()">
+		<div class="center_title">
+				<!--以下為直接複製至figma的logo-->
+				<svg width="551" height="173" viewBox="0 0 551 173" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<title>Page 1</title>
+<desc>Created using Figma</desc>
+<g id="Canvas" transform="translate(-1074 461)">
+<g id="Empowering Local SMEs">
+<use xlink:href="#path0_fill" transform="translate(1147 -329)" fill="#4F4F4F"/>
+</g>
+<g id="image 15">
+<use xlink:href="#path1_fill" fill="url(#pattern0)" transform="translate(1074 -461)"/>
+</g>
+</g>
+<defs>
+<pattern id="pattern0" patternUnits="objectBoundingBox" patternContentUnits="objectBoundingBox" width="1" height="1">
+<use xlink:href="#image0" transform="matrix(0.00181488 0 0 0.00746269 0 0)"/>
+</pattern>
+<path id="path0_fill" d="M 17.4375 21.1699L 6.3457 21.1699L 6.3457 30.2402L 19.2305 30.2402L 19.2305 33L 2.9707 33L 2.9707 7.40625L 19.0547 7.40625L 19.0547 10.1836L 6.3457 10.1836L 6.3457 18.4102L 17.4375 18.4102L 17.4375 21.1699ZM 25.9805 13.9805L 26.0684 16.0898C 27.4629 14.4492 29.3438 13.6289 31.7109 13.6289C 34.3711 13.6289 36.1816 14.6484 37.1426 16.6875C 37.7754 15.7734 38.5957 15.0352 39.6035 14.4727C 40.623 13.9102 41.8242 13.6289 43.207 13.6289C 47.3789 13.6289 49.5 15.8379 49.5703 20.2559L 49.5703 33L 46.3184 33L 46.3184 20.4492C 46.3184 19.0898 46.0078 18.0762 45.3867 17.4082C 44.7656 16.7285 43.7227 16.3887 42.2578 16.3887C 41.0508 16.3887 40.0488 16.752 39.252 17.4785C 38.4551 18.1934 37.9922 19.1602 37.8633 20.3789L 37.8633 33L 34.5938 33L 34.5938 20.5371C 34.5938 17.7715 33.2402 16.3887 30.5332 16.3887C 28.4004 16.3887 26.9414 17.2969 26.1562 19.1133L 26.1562 33L 22.9043 33L 22.9043 13.9805L 25.9805 13.9805ZM 70.5586 23.7012C 70.5586 26.5957 69.8965 28.9277 68.5723 30.6973C 67.248 32.4668 65.4551 33.3516 63.1934 33.3516C 60.8848 33.3516 59.0684 32.6191 57.7441 31.1543L 57.7441 40.3125L 54.4922 40.3125L 54.4922 13.9805L 57.4629 13.9805L 57.6211 16.0898C 58.9453 14.4492 60.7852 13.6289 63.1406 13.6289C 65.4258 13.6289 67.2305 14.4902 68.5547 16.2129C 69.8906 17.9355 70.5586 20.332 70.5586 23.4023L 70.5586 23.7012ZM 67.3066 23.332C 67.3066 21.1875 66.8496 19.4941 65.9355 18.252C 65.0215 17.0098 63.7676 16.3887 62.1738 16.3887C 60.2051 16.3887 58.7285 17.2617 57.7441 19.0078L 57.7441 28.0957C 58.7168 29.8301 60.2051 30.6973 62.209 30.6973C 63.7676 30.6973 65.0039 30.082 65.918 28.8516C 66.8438 27.6094 67.3066 25.7695 67.3066 23.332ZM 73.8457 23.3145C 73.8457 21.4512 74.209 19.7754 74.9355 18.2871C 75.6738 16.7988 76.6934 15.6504 77.9941 14.8418C 79.3066 14.0332 80.8008 13.6289 82.4766 13.6289C 85.0664 13.6289 87.1582 14.5254 88.752 16.3184C 90.3574 18.1113 91.1602 20.4961 91.1602 23.4727L 91.1602 23.7012C 91.1602 25.5527 90.8027 27.2168 90.0879 28.6934C 89.3848 30.1582 88.3711 31.3008 87.0469 32.1211C 85.7344 32.9414 84.2227 33.3516 82.5117 33.3516C 79.9336 33.3516 77.8418 32.4551 76.2363 30.6621C 74.6426 28.8691 73.8457 26.4961 73.8457 23.543L 73.8457 23.3145ZM 77.1152 23.7012C 77.1152 25.8105 77.6016 27.5039 78.5742 28.7812C 79.5586 30.0586 80.8711 30.6973 82.5117 30.6973C 84.1641 30.6973 85.4766 30.0527 86.4492 28.7637C 87.4219 27.4629 87.9082 25.6465 87.9082 23.3145C 87.9082 21.2285 87.4102 19.541 86.4141 18.252C 85.4297 16.9512 84.1172 16.3008 82.4766 16.3008C 80.8711 16.3008 79.5762 16.9395 78.5918 18.2168C 77.6074 19.4941 77.1152 21.3223 77.1152 23.7012ZM 112.078 28.5176L 115.734 13.9805L 118.986 13.9805L 113.449 33L 110.812 33L 106.189 18.5859L 101.689 33L 99.0527 33L 93.5332 13.9805L 96.7676 13.9805L 100.512 28.2188L 104.941 13.9805L 107.561 13.9805L 112.078 28.5176ZM 130.201 33.3516C 127.623 33.3516 125.525 32.5078 123.908 30.8203C 122.291 29.1211 121.482 26.8535 121.482 24.0176L 121.482 23.4199C 121.482 21.5332 121.84 19.8516 122.555 18.375C 123.281 16.8867 124.289 15.7266 125.578 14.8945C 126.879 14.0508 128.285 13.6289 129.797 13.6289C 132.27 13.6289 134.191 14.4434 135.562 16.0723C 136.934 17.7012 137.619 20.0332 137.619 23.0684L 137.619 24.4219L 124.734 24.4219C 124.781 26.2969 125.326 27.8145 126.369 28.9746C 127.424 30.123 128.76 30.6973 130.377 30.6973C 131.525 30.6973 132.498 30.4629 133.295 29.9941C 134.092 29.5254 134.789 28.9043 135.387 28.1309L 137.373 29.6777C 135.779 32.127 133.389 33.3516 130.201 33.3516ZM 129.797 16.3008C 128.484 16.3008 127.383 16.7812 126.492 17.7422C 125.602 18.6914 125.051 20.0273 124.84 21.75L 134.367 21.75L 134.367 21.5039C 134.273 19.8516 133.828 18.5742 133.031 17.6719C 132.234 16.7578 131.156 16.3008 129.797 16.3008ZM 150.592 16.8984C 150.1 16.8164 149.566 16.7754 148.992 16.7754C 146.859 16.7754 145.412 17.6836 144.65 19.5L 144.65 33L 141.398 33L 141.398 13.9805L 144.562 13.9805L 144.615 16.1777C 145.682 14.4785 147.193 13.6289 149.15 13.6289C 149.783 13.6289 150.264 13.7109 150.592 13.875L 150.592 16.8984ZM 157.131 33L 153.879 33L 153.879 13.9805L 157.131 13.9805L 157.131 33ZM 153.615 8.93555C 153.615 8.4082 153.773 7.96289 154.09 7.59961C 154.418 7.23633 154.898 7.05469 155.531 7.05469C 156.164 7.05469 156.645 7.23633 156.973 7.59961C 157.301 7.96289 157.465 8.4082 157.465 8.93555C 157.465 9.46289 157.301 9.90234 156.973 10.2539C 156.645 10.6055 156.164 10.7812 155.531 10.7812C 154.898 10.7812 154.418 10.6055 154.09 10.2539C 153.773 9.90234 153.615 9.46289 153.615 8.93555ZM 165.428 13.9805L 165.533 16.3711C 166.986 14.543 168.885 13.6289 171.229 13.6289C 175.248 13.6289 177.275 15.8965 177.311 20.4316L 177.311 33L 174.059 33L 174.059 20.4141C 174.047 19.043 173.73 18.0293 173.109 17.373C 172.5 16.7168 171.545 16.3887 170.244 16.3887C 169.189 16.3887 168.264 16.6699 167.467 17.2324C 166.67 17.7949 166.049 18.5332 165.604 19.4473L 165.604 33L 162.352 33L 162.352 13.9805L 165.428 13.9805ZM 181.441 23.332C 181.441 20.3672 182.127 18.0117 183.498 16.2656C 184.869 14.5078 186.686 13.6289 188.947 13.6289C 191.268 13.6289 193.078 14.4492 194.379 16.0898L 194.537 13.9805L 197.508 13.9805L 197.508 32.543C 197.508 35.0039 196.775 36.9434 195.311 38.3613C 193.857 39.7793 191.9 40.4883 189.439 40.4883C 188.068 40.4883 186.727 40.1953 185.414 39.6094C 184.102 39.0234 183.1 38.2207 182.408 37.2012L 184.096 35.25C 185.49 36.9727 187.195 37.834 189.211 37.834C 190.793 37.834 192.023 37.3887 192.902 36.498C 193.793 35.6074 194.238 34.3535 194.238 32.7363L 194.238 31.1016C 192.938 32.6016 191.162 33.3516 188.912 33.3516C 186.686 33.3516 184.881 32.4551 183.498 30.6621C 182.127 28.8691 181.441 26.4258 181.441 23.332ZM 184.711 23.7012C 184.711 25.8457 185.15 27.5332 186.029 28.7637C 186.908 29.9824 188.139 30.5918 189.721 30.5918C 191.771 30.5918 193.277 29.6602 194.238 27.7969L 194.238 19.1133C 193.242 17.2969 191.748 16.3887 189.756 16.3887C 188.174 16.3887 186.937 17.0039 186.047 18.2344C 185.156 19.4648 184.711 21.2871 184.711 23.7012ZM 215.262 30.2402L 227.391 30.2402L 227.391 33L 211.869 33L 211.869 7.40625L 215.262 7.40625L 215.262 30.2402ZM 229.869 23.3145C 229.869 21.4512 230.232 19.7754 230.959 18.2871C 231.697 16.7988 232.717 15.6504 234.018 14.8418C 235.33 14.0332 236.824 13.6289 238.5 13.6289C 241.09 13.6289 243.182 14.5254 244.775 16.3184C 246.381 18.1113 247.184 20.4961 247.184 23.4727L 247.184 23.7012C 247.184 25.5527 246.826 27.2168 246.111 28.6934C 245.408 30.1582 244.395 31.3008 243.07 32.1211C 241.758 32.9414 240.246 33.3516 238.535 33.3516C 235.957 33.3516 233.865 32.4551 232.26 30.6621C 230.666 28.8691 229.869 26.4961 229.869 23.543L 229.869 23.3145ZM 233.139 23.7012C 233.139 25.8105 233.625 27.5039 234.598 28.7812C 235.582 30.0586 236.895 30.6973 238.535 30.6973C 240.188 30.6973 241.5 30.0527 242.473 28.7637C 243.445 27.4629 243.932 25.6465 243.932 23.3145C 243.932 21.2285 243.434 19.541 242.438 18.252C 241.453 16.9512 240.141 16.3008 238.5 16.3008C 236.895 16.3008 235.6 16.9395 234.615 18.2168C 233.631 19.4941 233.139 21.3223 233.139 23.7012ZM 258.891 30.6973C 260.051 30.6973 261.064 30.3457 261.932 29.6426C 262.799 28.9395 263.279 28.0605 263.373 27.0059L 266.449 27.0059C 266.391 28.0957 266.016 29.1328 265.324 30.1172C 264.633 31.1016 263.707 31.8867 262.547 32.4727C 261.398 33.0586 260.18 33.3516 258.891 33.3516C 256.301 33.3516 254.238 32.4902 252.703 30.7676C 251.18 29.0332 250.418 26.666 250.418 23.666L 250.418 23.1211C 250.418 21.2695 250.758 19.623 251.438 18.1816C 252.117 16.7402 253.09 15.6211 254.355 14.8242C 255.633 14.0273 257.139 13.6289 258.873 13.6289C 261.006 13.6289 262.775 14.2676 264.182 15.5449C 265.6 16.8223 266.355 18.4805 266.449 20.5195L 263.373 20.5195C 263.279 19.2891 262.811 18.2813 261.967 17.4961C 261.135 16.6992 260.104 16.3008 258.873 16.3008C 257.221 16.3008 255.938 16.8984 255.023 18.0938C 254.121 19.2773 253.67 20.9941 253.67 23.2441L 253.67 23.8594C 253.67 26.0508 254.121 27.7383 255.023 28.9219C 255.926 30.1055 257.215 30.6973 258.891 30.6973ZM 281.848 33C 281.66 32.625 281.508 31.957 281.391 30.9961C 279.879 32.5664 278.074 33.3516 275.977 33.3516C 274.102 33.3516 272.561 32.8242 271.354 31.7695C 270.158 30.7031 269.561 29.3555 269.561 27.7266C 269.561 25.7461 270.311 24.2109 271.811 23.1211C 273.322 22.0195 275.443 21.4688 278.174 21.4688L 281.338 21.4688L 281.338 19.9746C 281.338 18.8379 280.998 17.9355 280.318 17.2676C 279.639 16.5879 278.637 16.248 277.312 16.248C 276.152 16.248 275.18 16.541 274.395 17.127C 273.609 17.7129 273.217 18.4219 273.217 19.2539L 269.947 19.2539C 269.947 18.3047 270.281 17.3906 270.949 16.5117C 271.629 15.6211 272.543 14.918 273.691 14.4023C 274.852 13.8867 276.123 13.6289 277.506 13.6289C 279.697 13.6289 281.414 14.1797 282.656 15.2812C 283.898 16.3711 284.543 17.877 284.59 19.7988L 284.59 28.5527C 284.59 30.2988 284.813 31.6875 285.258 32.7188L 285.258 33L 281.848 33ZM 276.451 30.5215C 277.471 30.5215 278.438 30.2578 279.352 29.7305C 280.266 29.2031 280.928 28.5176 281.338 27.6738L 281.338 23.7715L 278.789 23.7715C 274.805 23.7715 272.812 24.9375 272.812 27.2695C 272.812 28.2891 273.152 29.0859 273.832 29.6602C 274.512 30.2344 275.385 30.5215 276.451 30.5215ZM 293.221 33L 289.969 33L 289.969 6L 293.221 6L 293.221 33ZM 315.422 21.5918C 312.527 20.7598 310.418 19.7402 309.094 18.5332C 307.781 17.3145 307.125 15.8145 307.125 14.0332C 307.125 12.0176 307.928 10.3535 309.533 9.04102C 311.15 7.7168 313.248 7.05469 315.826 7.05469C 317.584 7.05469 319.148 7.39453 320.52 8.07422C 321.902 8.75391 322.969 9.69141 323.719 10.8867C 324.48 12.082 324.861 13.3887 324.861 14.8066L 321.469 14.8066C 321.469 13.2598 320.977 12.0469 319.992 11.168C 319.008 10.2773 317.619 9.83203 315.826 9.83203C 314.162 9.83203 312.861 10.2012 311.924 10.9395C 310.998 11.666 310.535 12.6797 310.535 13.9805C 310.535 15.0234 310.975 15.9082 311.854 16.6348C 312.744 17.3496 314.25 18.0059 316.371 18.6035C 318.504 19.2012 320.168 19.8633 321.363 20.5898C 322.57 21.3047 323.461 22.1426 324.035 23.1035C 324.621 24.0645 324.914 25.1953 324.914 26.4961C 324.914 28.5703 324.105 30.2344 322.488 31.4883C 320.871 32.7305 318.709 33.3516 316.002 33.3516C 314.244 33.3516 312.604 33.0176 311.08 32.3496C 309.557 31.6699 308.379 30.7441 307.547 29.5723C 306.727 28.4004 306.316 27.0703 306.316 25.582L 309.709 25.582C 309.709 27.1289 310.277 28.3535 311.414 29.2559C 312.563 30.1465 314.092 30.5918 316.002 30.5918C 317.783 30.5918 319.148 30.2285 320.098 29.502C 321.047 28.7754 321.521 27.7852 321.521 26.5312C 321.521 25.2773 321.082 24.3105 320.203 23.6309C 319.324 22.9395 317.73 22.2598 315.422 21.5918ZM 333.615 7.40625L 341.982 28.2891L 350.35 7.40625L 354.727 7.40625L 354.727 33L 351.352 33L 351.352 23.0332L 351.668 12.2754L 343.266 33L 340.682 33L 332.297 12.3281L 332.631 23.0332L 332.631 33L 329.256 33L 329.256 7.40625L 333.615 7.40625ZM 375.152 21.1699L 364.061 21.1699L 364.061 30.2402L 376.945 30.2402L 376.945 33L 360.686 33L 360.686 7.40625L 376.77 7.40625L 376.77 10.1836L 364.061 10.1836L 364.061 18.4102L 375.152 18.4102L 375.152 21.1699ZM 391.711 27.9551C 391.711 27.0762 391.377 26.3965 390.709 25.916C 390.053 25.4238 388.898 25.002 387.246 24.6504C 385.605 24.2988 384.299 23.877 383.326 23.3848C 382.365 22.8926 381.65 22.3066 381.182 21.627C 380.725 20.9473 380.496 20.1387 380.496 19.2012C 380.496 17.6426 381.152 16.3242 382.465 15.2461C 383.789 14.168 385.477 13.6289 387.527 13.6289C 389.684 13.6289 391.43 14.1855 392.766 15.2988C 394.113 16.4121 394.787 17.8359 394.787 19.5703L 391.518 19.5703C 391.518 18.6797 391.137 17.9121 390.375 17.2676C 389.625 16.623 388.676 16.3008 387.527 16.3008C 386.344 16.3008 385.418 16.5586 384.75 17.0742C 384.082 17.5898 383.748 18.2637 383.748 19.0957C 383.748 19.8809 384.059 20.4727 384.68 20.8711C 385.301 21.2695 386.42 21.6504 388.037 22.0137C 389.666 22.377 390.984 22.8105 391.992 23.3145C 393 23.8184 393.744 24.4277 394.225 25.1426C 394.717 25.8457 394.963 26.707 394.963 27.7266C 394.963 29.4258 394.283 30.791 392.924 31.8223C 391.564 32.8418 389.801 33.3516 387.633 33.3516C 386.109 33.3516 384.762 33.082 383.59 32.543C 382.418 32.0039 381.498 31.2539 380.83 30.293C 380.174 29.3203 379.846 28.2715 379.846 27.1465L 383.098 27.1465C 383.156 28.2363 383.59 29.1035 384.398 29.748C 385.219 30.3809 386.297 30.6973 387.633 30.6973C 388.863 30.6973 389.848 30.4512 390.586 29.959C 391.336 29.4551 391.711 28.7871 391.711 27.9551Z"/>
+<path id="path1_fill" d="M 0 0L 551 0L 551 134L 0 134L 0 0Z"/>
+<image id="image0" width="551" height="134" preserveAspectRatio="none" xlink:href="data:image/png;base64,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bMK2GukWyjsubrXCJi1DDAgf+/lLcWt+kyQWrh83/zj2XI3rlrScC9eVn7lrS+csabf0bO3yWZL+sbiRX+fqoCVbredd3iEtapRzazxa3CdxEqFMBuNvT5nB2eRM39q2UnHi7PB/e7PRj1vO8d7syWGgZ0RABI5D4DBfJc5N0q0b7tx4h0MmjJsAAAHRSURBVJ7bo01Te/dm497smaaX/hcBERABn4AmxPo0dCwCIiACIiACIrA5AYmTzZNAERABERABERABEfAJSJz4NHQsAiIgAiIgAiKwOQGJk82TQBEQAREQAREQARHwCUic+DR0LAIiIAIiIAIisDkBiZPNk0AREAEREAEREAER8AlInPg0dCwCIiACIiACIrA5AYmTzZNAERABERABERABEfAJSJz4NHQsAiIgAiIgAiKwOQGJk82TQBEQAREQAREQARHwCUic+DR0LAIiIAIiIAIisDkBiZPNk0AREAEREAEREAER8AlInPg0dCwCIiACIiACIrA5AYmTzZNAERABERABERABEfAJSJz4NHQsAiIgAiIgAiKwOQGJk82TQBEQAREQAREQARHwCXzr/6NjEdiCwNnZ2enx48dbBK0wRUAEREAEOiTwzfX19XWH8VKUREAEREAEREAEDkpAr3UOmvAyWwREQAREQAR6JSBx0mvKKF4iIAIiIAIicFACEicHTXiZLQIiIAIiIAK9EpA46TVlFC8REAEREAEROCgBiZODJrzMFgEREAEREIFeCUic9JoyipcIiIAIiIAIHJSAxMlBE15mi4AIiIAIiECvBP4fUecZou/IIYMAAAAASUVORK5CYII="/>
+</defs>
+</svg>
+
+
+			
+			</div>
+			<div class="row" style="padding-top:6%">
+			<div class=" subtitle col-md-offset-3 col-6 col-xs-offset-3 ">		
+			<b style="font-family:Roboto;">Small Medium Enterprise Hustle</b>
+			</div>
+			<div class="col-md-offset-2 col-8 col-xs-offset-2" > <img src="img/graph1.png" > </div>
+	
+	
+			<div class=" subtitle col-md-offset-3 col-6 col-xs-offset-3 ">
+			<b style="font-family:Roboto;margin-top:6%;">Hsinchu Business Survival Rate</b>
+			</div>
+			<div class="col-md-offset-2 col-8 col-xs-offset-2" > <img src="img/graph2.png">	</div>
+			</div>
+	</div>
+		
+	<div class=" row " onmousemove="disappear()">
+			<div class=" subtitle col-md-offset-3 col-6 col-xs-offset-3 ">
+			<b style="font-family:Roboto;margin-top:6%;">Hsinchu 100 Year Old Shops</b>
+			</div>
+			<div class="part">
+			<div class="col-2" style="margin-left:23%"   >	
+			<img src="img/shop1.png" class="img-responsive" style="min-height:0px; "> 
+			<div class="descript" ><b>聯勝碾米店</b></br>白米販賣</br>新北市北門街128號</div></div>
+			<div class=" col-2 " style="margin-left:2%">	<img src="img/shop2.png" class="img-responsive" style="min-height:0px"> 
+			<div class="descript" ><b>泉香茶行</b></br>茶葉、菸酒</br>新北市中央路31號</div></div>
+			<div class="  col-2 " style="margin-left:2%">	<img src="img/shop3.png" class="img-responsive" style="min-height:0px"> 
+			<div class="descript" ><b>金菊美髮廊</b></br>美髮、美容</br>新北市中央路75號2樓</div></div>
+		</div>
+			
+			
+	</div>
+			
+	<div class="row qoute">
+			
+		<div class=" subtitle col-md-offset-3 col-md-6 col-xs-offset-3 col-xs-6">	
+		<div class="p_line" style="color:#FDDBD1">LOCATION</div>
+		<div class="p_line" style="color:#F3755E">LOCATION</div>
+		<div class="p_line" style="color:#EF3526">LOCATION</div>
+		<br/>
+		<p><b>every thing is related to everything else,</br>but near things are more related than distant things</b></br></p>
+		<p><b style="font-family:Roboto;">Waldo Tobler</b></p>	
+	</div>
+	</div>
+	
+	<div class=" row ">
+			<div class=" subtitle col-md-offset-3 col-6 col-xs-offset-3 ">
+			<b style="margin-top:6%;">道路路網結構分析</b>
+			</div>
+			<div class="col-md-offset-3 col-6 col-xs-offset-2" > <img src="img/road.png" > </div>
+			<div class="col-md-offset-3 col-6 col-xs-offset-2" > <img src="img/road2.png" > </div>		
+	</div>
+	
+	<div class=" row ">
+			<div class=" subtitle col-md-offset-3 col-6 col-xs-offset-3 ">
+			<b style="margin-top:6%;">商業登記、興趣點位分析</b>
+			</div>
+			<div class="col-md-offset-3 col-6 col-xs-offset-2" > <img src="img/poi.png" > </div>
+	</div>
+	
+	<div class=" row ">
+			<div class=" subtitle col-md-offset-3 col-6 col-xs-offset-3 ">
+			<b style="margin-top:6%;">人口分析</b>
+			</div>
+			<div class="col-md-offset-3 col-6 col-xs-offset-2" > <img src="img/pop.png" > </div>
+	</div>
+	
+	<div class=" row ">
+			<div class=" subtitle col-md-offset-3 col-6 col-xs-offset-3 ">
+			<b style="margin-top:6%;">2017消費強度分布</b>
+			</div>
+			<div class="col-md-offset-3 col-6 col-xs-offset-2" > <img src="img/2017_cons.png" > </div>
+	</div>
+	
+	<div class=" row ">
+			<div class=" subtitle col-md-offset-3 col-6 col-xs-offset-3 ">
+			<b style="margin-top:6%;">商業登記數量分布</b>
+			</div>
+			<div class="col-md-offset-3 col-6 col-xs-offset-2" > <img src="img/shop_num.png" > </div>
+	</div>
+	
+	<div class=" row ">
+			<div class=" subtitle col-md-offset-3 col-6 col-xs-offset-3 ">
+			<b style="margin-top:6%;">租金價格分布</b>
+			</div>
+			<div class="col-md-offset-3 col-6 col-xs-offset-2" > <img src="img/rent.png" > </div>
+	</div>
+	
+	<div class=" row ">
+			<div class=" subtitle col-md-offset-3 col-6 col-xs-offset-3 ">
+			<b style="margin-top:6%;">歇業比例分布</b>
+			</div>
+			<div class="col-md-offset-3 col-6 col-xs-offset-2" > <img src="img/closing_rate.png" > </div>
+	</div>
+	
+	<div class=" row ">
+			<div class=" subtitle col-md-offset-3 col-6 col-xs-offset-3 ">
+			<b style="margin-top:6%;font-family:Roboto;">Why Hexagon?</b>
+			</div>
+			<div class="col-md-offset-3 col-6 col-xs-offset-2" > <img src="img/why.png" > </div>
+	</div>
+	
+	<div class=" row ">
+			<div class=" subtitle col-md-offset-3 col-6 col-xs-offset-3 ">
+			<b style="margin-top:6%;font-family:Roboto;">Spatial Score</b>
+			</div>
+			<div class="col-md-offset-3 col-6 col-xs-offset-2" > <img src="img/comparison.png" > </div>
+	</div>
+	
+	<div class=" row ">
+			<div class=" subtitle col-md-offset-3 col-6 col-xs-offset-3 ">
+			<b style="margin-top:6%;font-family:Roboto;">Spatial Query</b>
+			</div>
+			<div class="col-md-offset-3 col-6 col-xs-offset-2" > <img src="img/demo1.png" > </div>
+			<div class="col-md-offset-3 col-6 col-xs-offset-2" > <img src="img/demo2.png" > </div>
+			<div class="col-md-offset-3 col-6 col-xs-offset-2" > <img src="img/demo3.png" > </div>
+	</div>
+	
+	<div class="container-fluid" style="height:100%;overflow:hidden;" onmousemove="disappear()">	
+	  <div class="row" style="height:100%">
+		<div class="col-md-8 col-xs-12">
+		  <div class="index-map" id="opening-left-map">
+		  </div>
+		  <div class="map_tool">
+			<button class="btn btn-warning" onclick="initMap()">返回全區</button>
+		  </div>
+		</div>
+		
+		<div class="col-md-4 col-xs-12" >
+			<div class="index-map" id="opening-right-map">
+			</div>
+			
+			<div class="map-info" id="right-map-info">
+
+			</div>
+			
+			<div class="map-info" id="right-map-stat-info">
+			</div>
+			
+		</div>
+		
+	  </div> 
+	  </div>
+	 <div class=" row ">
+			<div class=" subtitle col-md-offset-3 col-6 col-xs-offset-3 ">
+			<b style="margin-top:6%;font-family:Roboto;">Business Intelligence</b>
+			</div>
+			<div class=" subtitle col-md-offset-3 col-6 col-xs-offset-3 ">
+			<b style="margin-top:6%; ">產業區位相關性</b>
+			</div>
+			<div class="col-md-offset-1 col-10 col-xs-offset-2" > <img src="img/corr1.png" > </div>
+			<div class=" subtitle col-md-offset-3 col-6 col-xs-offset-3 ">
+			<b style="margin-top:6%;">區位屬性相關性</b>
+			</div>
+			
+			<div class="col-md-offset-2 col-8 col-xs-offset-2" > <img src="img/corr2.png" > </div>
+			
+	</div>
+	
+	<div class=" row part">
+			
+	</div>
+	  
+	
+	
+	<div class=" row part">
+			<div class="col-md-offset-3 col-6 col-xs-offset-2" > <img src="img/thanks.png" > </div>
+			
+	</div>
+
+	
+	
+
+	
+	
+	
+			
+		
+
+	
+
+	
+
+	
+
+	</div>
+
+
+<script>
+	
+   
+
+
+	function responsive_navtap() {
+		var x = document.getElementById("myTopnav");
+		if (x.className === "topnav") {
+			x.className += " responsive";
+		} else {
+			x.className = "topnav";
+		}
+	}
+	
+	function disappear(){
+		var x = document.getElementById("myTopnav");
+		if (x.className === "topnav responsive") {
+			x.className = " topnav";
+		} else {
+			x.className = "topnav";
+		}	
+	}
+	function initMap() {
+    $("#right-map-info").text("");
+	$("#right-map-stat-info").text("");
+
+    left_map = new google.maps.Map(document.getElementById('opening-left-map'), {
+          zoom: 10,
+          center: {lat: 24.786005, lng:120.950411},
+		  styles:map_style_json
+        });
+		
+	createTowns("potential",left_map);
+	
+	right_map = new google.maps.Map(document.getElementById('opening-right-map'), {
+          zoom: 10,
+          center: {lat: 24.786005, lng:120.950411}
+        });
+};
+
+map_style_json =  [ {
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "color": "#f5f5f5"
+      }
+    ]
+  },
+  {
+    "elementType": "labels.icon",
+    "stylers": [
+      {
+        "visibility": "off"
+      }
+    ]
+  },
+  {
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#616161"
+      }
+    ]
+  },
+  {
+    "elementType": "labels.text.stroke",
+    "stylers": [
+      {
+        "color": "#f5f5f5"
+      }
+    ]
+  },
+  {
+    "featureType": "administrative.land_parcel",
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#bdbdbd"
+      }
+    ]
+  },
+  {
+    "featureType": "poi",
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "color": "#eeeeee"
+      }
+    ]
+  },
+  {
+    "featureType": "poi",
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#757575"
+      }
+    ]
+  },
+  {
+    "featureType": "poi.park",
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "color": "#e5e5e5"
+      }
+    ]
+  },
+  {
+    "featureType": "poi.park",
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#9e9e9e"
+      }
+    ]
+  },
+  {
+    "featureType": "road",
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "color": "#ffffff"
+      }
+    ]
+  },
+  {
+    "featureType": "road.arterial",
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#757575"
+      }
+    ]
+  },
+  {
+    "featureType": "road.highway",
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "color": "#dadada"
+      }
+    ]
+  },
+  {
+    "featureType": "road.highway",
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#616161"
+      }
+    ]
+  },
+  {
+    "featureType": "road.local",
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#9e9e9e"
+      }
+    ]
+  },
+  {
+    "featureType": "transit.line",
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "color": "#e5e5e5"
+      }
+    ]
+  },
+  {
+    "featureType": "transit.station",
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "color": "#eeeeee"
+      }
+    ]
+  },
+  {
+    "featureType": "water",
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "color": "#c9c9c9"
+      }
+    ]
+  },
+  {
+    "featureType": "water",
+    "elementType": "geometry.fill",
+    "stylers": [
+      {
+        "color": "#63cfd8"
+      }
+    ]
+  },
+  {
+    "featureType": "water",
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#9e9e9e"
+      }
+    ]
+  }
+];
+
+</script>
+<script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDW2R3JvnGX3WPGyv2NOH_TbprbOIFmBuc&libraries=visualization&callback=initMap">
+</script>
+</body>
+
+</html>

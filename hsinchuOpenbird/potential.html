@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>新竹市產業發展潛力分析地圖</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.bundle.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" rel="stylesheet">
+<link href="css/hsinchuMap.css" rel="stylesheet">
+
+<script src="myScript/createPotentialTown.js"></script>
+<script src="myScript/get_geojson_data.js"></script>
+<script src="myScript/myDropdown.js"></script>
+
+ <style>
+
+.map_tool{
+    position:absolute;
+	right:35%;
+	top:50px;
+	z-index:1000;
+}
+ 
+.attr_bar{
+ width:80%;
+ background-color:RGB(0,78,102);
+}
+
+.attr_value{
+ width:0.1px;
+ background-color:RGB(111,203,218);
+}
+
+.attr_str{
+ text-align:right;
+ color:white;
+ background-color:RGB(111,203,218);
+}
+
+.potential_contaniner{
+  margin-top:5px;
+  position:relative;
+  height:200px;
+  width:300px;
+  border-bottom: 0.5px solid #ddd;
+  border-left: 0.5px solid #ddd;
+}
+
+.potential_avg{
+  text-align:center;
+  color:white;
+  position:absolute;
+  bottom:0;
+  left:10%;
+  width:35%;
+  height:50%;
+  background-color:#ddd;
+  float:left;
+}
+
+.potential_here{
+  text-align:center;
+  color:white;
+  position:absolute;
+  bottom:0;
+  left:55%;
+  width:35%;
+  height:90%;
+  float:left;
+  background-color:rgb(255, 99, 132);
+}
+
+#test{
+    margin-top:20px;
+}
+ </style> 
+ 
+</head>
+ 
+ 
+ 
+<body>
+
+
+  <div class="nav_item">
+
+  <div class="topnav" id="myTopnav">
+
+      <a href="index.html" >首頁</a>
+	  
+	  <a href="hexagon.html">網格屬性</a>
+
+      <a href="potential.html" class="focused_topnav_a">區域屬性</a>
+
+      <a href="yearly.html">時序變化</a>
+
+      <a href="javascript:void(0);" style="font-size:14px;" class="icon" onclick="responsive_navtap()">&#9776;</a>
+
+  </div>
+
+ </div>
+
+<div class="container-fluid" style="height:100%">
+  <div class="row" style="height:100%">
+    <!--
+	<div class="col-md-12 head-banner" style="height:10%">
+       <label style="text-align:center">新竹市產業發展潛力分析地圖</label>
+    </div>
+	-->
+	
+	<div class="col-md-12 col-xs-12" id="map">
+    </div>
+	
+    <div class="map_tool">
+	    <button class="btn btn-warning" onclick="initMap()">返回全區</button>
+	</div>
+	
+	<div class="col-xs-12 right_panel">
+	  <div>
+	    
+		<div class="dropdown">
+            <button onclick="myDropdownFunction()" class="btn dropbtn">選擇屬性</button>
+              <div id="myDropdown" class="dropdown-content">
+                <!--<h5>人口</h5>-->
+                
+				<!--<h5>商業登記</h5>-->
+                <label onclick="pop_heat_map('ccn_pr')">開業數</label>
+				<label onclick="pop_heat_map('closed_rat')">歇業率</label>
+				<!--<h5>2017年消費指數</h5>-->
+                <label onclick="pop_heat_map('rec_a_2017')">消費強度</label>
+				<label onclick="pop_heat_map('bet_pr')">路網連結度</label>
+				<label onclick="pop_heat_map('pop_pr')">總人口數</label>
+				<label onclick="pop_heat_map('dependency')">扶養比</label>
+				<label onclick="pop_heat_map('childhood')">幼年人口比</label>
+				<label onclick="pop_heat_map('adult')">壯年人口比</label>
+				<label onclick="pop_heat_map('elderly')">老年人口比</label>
+				
+              </div>
+        </div>
+		<div class="btn btn-primary" onclick="show_all_class()">顯示全部</div>
+	  </div>
+	  
+	  <div id = "test">
+	      
+	  </div>
+	  
+	</div>
+	<div class="right_panel_background">
+	</div>
+  </div>
+</div> 
+ 
+<script>
+//////////////////google maps////////////////////////////
+
+function test(){};
+
+var map;
+var population_list;
+var households_list;
+//var infoWindow;
+var rank;
+var pr;
+/*
+var ingradient_colors = [
+    "RGB(68,100,160)",
+	"RGB(127,146,174)",
+	"RGB(198,199,191)",
+	"RGB(252,240,203)",
+	"RGB(242,196,163)",
+	"RGB(227,143,114)",
+	"RGB(212,89,65)",
+];
+*/
+
+var ingradient_colors = [
+    "RGB(212,89,65)",
+	"RGB(227,143,114)",
+	"RGB(242,196,163)",
+	"RGB(252,240,203)",
+	"RGB(198,199,191)",
+	"RGB(127,146,174)",
+	"RGB(68,100,160)"
+];
+
+var class1_object = [];
+var class2_object = [];
+var class3_object = [];
+var class4_object = [];
+var class5_object = [];
+var class6_object = [];
+var class7_object = [];
+
+var serial_time_data = [];
+
+var color = Chart.helpers.color;
+window.chartColors = {
+	         red: 'rgb(255, 99, 132)',
+	         orange: 'rgb(255, 159, 64)',
+	         yellow: 'rgb(255, 205, 86)',
+	         green: 'rgb(75, 192, 192)',
+	         blue: 'rgb(54, 162, 235)',
+	         purple: 'rgb(153, 102, 255)',
+	         grey: 'rgb(201, 203, 207)'
+        };
+
+var geo_property = {
+    "population":"人口數",
+	"households":"住宅數",
+	"w1000101":"100年咖啡家數",
+	"W1000102":"99年咖啡家數"
+};
+
+function clear_all(){
+    $("#canvas_container").empty();
+	$("#test").empty();
+	$("#bar_area").empty();
+};
+
+///////////////////////////////////Start of initMap()//////////////////////////////////////
+function initMap() {
+    clear_all();
+    //$("#test").text("");
+	//window.myBar.destroy();
+    map = new google.maps.Map(document.getElementById('map'), {
+          zoom: 10,
+          center: {lat: 24.786005, lng:120.950411},
+		  styles:map_style_json,
+		  mapTypeControlOptions: {
+              style: google.maps.MapTypeControlStyle.HORIZONTAL_BAR,
+              position: google.maps.ControlPosition.BOTTOM_LEFT
+          }
+        });
+
+    createTowns("potential");
+};
+///////////////////////////////////End of initMap()////////////////////////////////////// 
+
+function pop_heat_map(heat_type){
+
+	clear_all();
+	var lengend_str = "";
+	lengend_str += '<p>' + property_chinese[heat_type] + '</p>';
+	lengend_str += '<div class="legend_div" style="background-color:' + ingradient_colors[0] +';" onclick="show_by_class(7)"></div>';
+	lengend_str += '<div class="legend_div" style="background-color:' + ingradient_colors[1] +';" onclick="show_by_class(6)"></div>';
+	lengend_str += '<div class="legend_div" style="background-color:' + ingradient_colors[2] +';" onclick="show_by_class(5)"></div>';
+	lengend_str += '<div class="legend_div" style="background-color:' + ingradient_colors[3] +';" onclick="show_by_class(4)"></div>';
+	lengend_str += '<div class="legend_div" style="background-color:' + ingradient_colors[4] +';" onclick="show_by_class(3)"></div>';
+	lengend_str += '<div class="legend_div" style="background-color:' + ingradient_colors[5] +';" onclick="show_by_class(2)"></div>';
+	lengend_str += '<div class="legend_div" style="background-color:' + ingradient_colors[6] +';" onclick="show_by_class(1)"></div>';
+	$("#test").append(lengend_str);
+	
+	var maxHeatValue = d3.max(pr_list[heat_type]);
+	var minHeatValue = d3.min(pr_list[heat_type]);
+	var heatInterval = (maxHeatValue - minHeatValue) / 7;
+	
+	console.log("pr_list[heat_type]: ",pr_list[heat_type]);
+	console.log("minHeatValue: ",minHeatValue, "maxHeatValue: ",maxHeatValue,"heatInterval: ",heatInterval);
+	
+	
+    rec_object_list.forEach((rec) => {
+	    google.maps.event.clearInstanceListeners(rec); //移除事件
+		
+		//rank = population_list.indexOf(rec.properties["population"]) + 1;
+        //pr = Math.round(((population_list.length - rank) / (population_list.length) * 100));
+		
+		//pr = rec.properties["population"] / 100;
+		
+		rec.setOptions({
+			    strokeColor : "RGB(250,250,250)",
+                strokeWeight: 0.5,
+			});
+		
+		if (0 <= rec.properties[heat_type] && rec.properties[heat_type] < heatInterval * 1){
+		    rec.setOptions({
+			    fillColor:ingradient_colors[6]
+			});
+			class1_object.push(rec);	    
+		}
+		else if (heatInterval * 1 <= rec.properties[heat_type] && rec.properties[heat_type] < heatInterval * 2){
+		    rec.setOptions({
+			    fillColor:ingradient_colors[5]
+			});
+			class2_object.push(rec);
+		}
+		else if (heatInterval * 2 <= rec.properties[heat_type] && rec.properties[heat_type] < heatInterval * 3){
+		    rec.setOptions({
+			    fillColor:ingradient_colors[4]
+			});
+			class3_object.push(rec);
+		}
+		else if (heatInterval * 3 <= rec.properties[heat_type] && rec.properties[heat_type] < heatInterval * 4){
+		    rec.setOptions({
+			    fillColor:ingradient_colors[3]
+			});
+			class4_object.push(rec);
+		}
+		else if (heatInterval * 4 <= rec.properties[heat_type] && rec.properties[heat_type] < heatInterval * 5){
+		    rec.setOptions({
+			    fillColor:ingradient_colors[2]
+			});
+			class5_object.push(rec);
+		}
+		else if (heatInterval * 5 <= rec.properties[heat_type] && rec.properties[heat_type] < heatInterval * 6){
+		    rec.setOptions({
+			    fillColor:ingradient_colors[1]
+			});
+			class6_object.push(rec);
+		}
+		else if(rec.properties[heat_type] >= heatInterval * 6) {
+		    rec.setOptions({
+			    fillColor:ingradient_colors[0]
+			});
+			class7_object.push(rec);
+		}
+		
+		rec.setOptions({
+			fillOpacity:0.8
+		});
+	});	
+};
+				
+function show_by_class(class_num){
+    rec_object_list.forEach((rec) => {
+	    rec.setOptions({
+		    strokeColor : "#000",
+            strokeWeight: 0,
+			fillOpacity:0
+		});
+	});
+	switch (class_num){
+    case 7:
+	    class7_object.forEach((rec) => {
+	        rec.setOptions({
+				strokeColor : "#000",
+                strokeWeight: 0.5,
+				fillOpacity:0.7
+		    });
+	    });
+	    break;
+	case 6:
+	    class6_object.forEach((rec) => {
+	        rec.setOptions({
+				strokeColor : "#000",
+                strokeWeight: 0.5,
+				fillOpacity:0.7
+		    });
+	    });
+		break;
+	case 5:
+	    class5_object.forEach((rec) => {
+	        rec.setOptions({
+				strokeColor : "#000",
+                strokeWeight: 0.5,
+				fillOpacity:0.7
+		    });
+	    });
+		break;
+	case 4:
+	    class4_object.forEach((rec) => {
+	        rec.setOptions({
+				strokeColor : "#000",
+                strokeWeight: 0.5,
+				fillOpacity:0.7
+		    });
+	    });
+		break;
+	case 3:
+	    class3_object.forEach((rec) => {
+	        rec.setOptions({
+				strokeColor : "#000",
+                strokeWeight: 0.5,
+				fillOpacity:0.7
+		    });
+	    });
+		break;
+	case 2:
+	    class2_object.forEach((rec) => {
+	        rec.setOptions({
+				strokeColor : "#000",
+                strokeWeight: 0.5,
+				fillOpacity:0.7
+		    });
+	    });
+		break;
+	case 1:
+	    class1_object.forEach((rec) => {
+	        rec.setOptions({
+				strokeColor : "#000",
+                strokeWeight: 0.5,
+				fillOpacity:0.7
+		    });
+	    });
+		break;
+	};
+};
+
+function show_all_class(){
+    rec_object_list.forEach((rec) => {		
+		rec.setOptions({
+			    strokeColor : "RGB(250,250,250)",
+                strokeWeight: 0.5,
+				fillOpacity:0.8
+			});
+	});
+};
+
+map_style_json =  [ {
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "color": "#f5f5f5"
+      }
+    ]
+  },
+  {
+    "elementType": "labels.icon",
+    "stylers": [
+      {
+        "visibility": "off"
+      }
+    ]
+  },
+  {
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#616161"
+      }
+    ]
+  },
+  {
+    "elementType": "labels.text.stroke",
+    "stylers": [
+      {
+        "color": "#f5f5f5"
+      }
+    ]
+  },
+  {
+    "featureType": "administrative.land_parcel",
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#bdbdbd"
+      }
+    ]
+  },
+  {
+    "featureType": "poi",
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "color": "#eeeeee"
+      }
+    ]
+  },
+  {
+    "featureType": "poi",
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#757575"
+      }
+    ]
+  },
+  {
+    "featureType": "poi.park",
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "color": "#e5e5e5"
+      }
+    ]
+  },
+  {
+    "featureType": "poi.park",
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#9e9e9e"
+      }
+    ]
+  },
+  {
+    "featureType": "road",
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "color": "#ffffff"
+      }
+    ]
+  },
+  {
+    "featureType": "road.arterial",
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#757575"
+      }
+    ]
+  },
+  {
+    "featureType": "road.highway",
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "color": "#dadada"
+      }
+    ]
+  },
+  {
+    "featureType": "road.highway",
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#616161"
+      }
+    ]
+  },
+  {
+    "featureType": "road.local",
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#9e9e9e"
+      }
+    ]
+  },
+  {
+    "featureType": "transit.line",
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "color": "#e5e5e5"
+      }
+    ]
+  },
+  {
+    "featureType": "transit.station",
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "color": "#eeeeee"
+      }
+    ]
+  },
+  {
+    "featureType": "water",
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "color": "#c9c9c9"
+      }
+    ]
+  },
+  {
+    "featureType": "water",
+    "elementType": "geometry.fill",
+    "stylers": [
+      {
+        "color": "#63cfd8"
+      }
+    ]
+  },
+  {
+    "featureType": "water",
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#9e9e9e"
+      }
+    ]
+  }
+];
+ 
+</script>
+
+<script src="https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js">
+</script>
+	
+<script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDW2R3JvnGX3WPGyv2NOH_TbprbOIFmBuc&libraries=visualization&callback=initMap">
+</script>
+
+</body>
+</html>

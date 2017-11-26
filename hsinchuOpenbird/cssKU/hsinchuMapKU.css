@@ -1,0 +1,386 @@
+
+html ,body{
+  font-family: Microsoft JhengHei;sans-serif;
+  -webkit-text-size-adjust: 100%;
+  -ms-text-size-adjust: 100%;
+  height:100%;
+  
+}
+body{
+	overflow-x:hidden;
+}
+
+* {
+  box-sizing:border-box;
+  font-size:16px;
+}
+
+
+/*for mobile*/
+[class*="col-"]{
+	float:left;
+	padding:5px;
+	width:100%;
+}
+
+.row{
+	font-family: Microsoft JhengHei;sans-serif;
+}
+
+.part{
+	/*
+	height:700px;
+	background-color:#282c37;
+	color:white;
+	*/
+	font-family: Microsoft JhengHei;sans-serif;
+	display: table;
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background: white;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    background-size: cover;
+    -o-background-size: cover;
+	overflow: hidden;
+}
+
+
+.center_title{
+   margin-top:6%;
+   text-align:center;
+	font-family:Microsoft JhengHei;sans-serif;
+}
+
+img{
+	max-width:100%;
+	height:auto;
+	
+}
+
+@media (min-width: 768px) {
+  #center_title{
+	margin-top:5%;	
+  }  
+}
+
+.focused_topnav_a{
+	background-color:RGB(47,47,56);
+}
+
+.focused_topnav_a:hover{
+	background-color: RGB(250,245,235);
+    color: black;
+	text-decoration: none;
+}
+
+.nav_item{
+	font-family: Microsoft JhengHei;sans-serif;
+	background-color:gray;
+	text-align:center;
+	line-height:50px;
+	position:fixed;
+	width:100%;
+	z-index:999;
+	height:50px;
+	color:black;
+}
+
+.nav_item span a{
+  /*float:right;*/
+  text-decoration:none;
+  color:black;
+  padding-left:10px;
+  position:fixed;
+}
+
+.nav_span{
+	text-align:center;
+}
+
+
+/*--------responsive top nav bar*/
+.topnav {
+    background-color:#E0E0E0;
+    overflow: hidden;
+}
+
+/* Style the links inside the navigation bar */
+.topnav a {
+    float: left;
+    display: block;
+    color: #f2f2f2;
+    text-align: center;
+    padding: 0px 16px;
+    text-decoration: none;
+    font-size: 16px;
+}
+
+/* Change the color of links on hover */
+.topnav a:hover {
+    /*background-color: RGB(229,206,173);*/
+	background-color: RGB(250,245,235);
+    color: black;
+	text-decoration: none;
+}
+
+
+
+
+/* When the screen is less than 600 pixels wide, hide all links, except for the first one ("Home"). Show the link that contains should open and close the topnav (.icon) */
+
+  .topnav a:not(:first-child) {display: none;}
+  .topnav a.icon {
+    float: left;
+    display: block;
+	text-decoration: none;
+  }
+
+
+/* The "responsive" class is added to the topnav with JavaScript when the user clicks on the icon. This class makes the topnav look good on small screens (display the links vertically instead of horizontally) */
+
+  .topnav.responsive {position: relative;}
+  .topnav.responsive a.icon {
+    float: left;
+    display: block;
+	text-decoration: none;
+  }
+
+  
+  .topnav.responsive a {
+    float: left;
+    display: block;
+    text-align: left;
+	text-decoration: none;
+	color:black;
+  }
+  
+  .topnav.responsive .focused_topnav_a{
+	  display:none;
+  }
+  
+/*--------responsive top nav bar*/
+
+/*--------responsive typogrpht*/
+html {
+  font-size: 14px;
+}
+
+@include media-breakpoint-up(sm) {
+  html {
+    font-size: 16px;
+  }
+}
+
+@include media-breakpoint-up(md) {
+  html {
+    font-size: 20px;
+  }
+}
+
+@include media-breakpoint-up(lg) {
+  html {
+    font-size: 28px;
+  }
+}
+
+/*--------Map--------------------*/
+input[type="range"]{
+  -webkit-appearance: none;
+  overflow:hidden;     /* 限定範圍 */
+  width:200px;
+  height:15px;
+  outline : none;      /* 避免點選會有藍線或虛線 */
+  background-color:RGB(0,78,102);
+}
+  input[type="range"]::-webkit-slider-thumb{
+  -webkit-appearance: none;
+  position: relative;    /* 設為相對位置，為了前後區塊的絕對位置而設定 */
+  width:15px;
+  height:15px;
+  background:RGB(111,203,218);
+  border-radius:50%;
+  transition:.2s;        /* 點選放大時候的漸變時間 */
+}
+
+#map {
+ height: 100%;
+ width: 100%;
+ padding:0px;
+ margin:auto 0;
+}
+
+.subtitle{
+	padding-top:2%;
+	font-family:Microsoft JhengHei,Roboto;
+	max-height: 5%;
+	 
+
+}
+
+.descript{
+	text-align:center;
+	padding-top:5%;
+	font-family:  Microsoft JhengHei;
+}
+
+
+#side {
+	float:left;
+	padding-left:8%; 
+
+}
+
+canvas {
+        -moz-user-select: none;
+        -webkit-user-select: none;
+        -ms-user-select: none;
+}
+    
+
+.btn{
+  margin-top:5px;
+  cursor:pointer;
+  font-family:Microsoft JhengHei;
+}
+.head-banner{
+  background-color:#282c37;
+  color:white;
+}
+
+.bar_base_div *{
+  padding:0;
+}
+
+.bar_base_div{
+  width:100%;
+  font-size:14px;
+}
+
+.bar_base_div:hover{
+  opacity:0.7;
+  cursor:pointer;
+}
+
+.bar_color{
+  height:14px;
+  background-color:RGB(111,203,218);
+  width:1%;
+}
+
+#bar_area{
+  margin-top:10px;
+}
+
+.right_panel{
+  color:white;
+  position:fixed;
+  height:100%;
+  width:30%;
+  top:50px;
+  right:0;
+  z-index:101;
+  padding-left: 15px;
+  padding-top: 30px;
+}
+
+.right_panel_background{
+  position:fixed;
+  height:100%;
+  width:30%;
+  top:50px;
+  right:0;
+  background-color: RGB(51,51,51);
+  opacity:0.8;
+  z-index:100;
+}
+
+.legend_div{
+  text-align:center;
+  width:50%;
+  height:40px;
+  //border-style: solid;
+  //border-color: white;
+  cursor:pointer;
+}
+
+.qoute{
+	background-color:#F2F2F2;
+	text-align:center;
+	
+}
+
+.p_line{
+ 
+
+
+font-family: Roboto;
+font-style: normal;
+font-weight: 900;
+line-height: 80%;
+font-size: 96px;
+text-align: center;
+}
+/*--------Map--------------------*/
+
+.index-map{
+	width:100%;
+	height:80%;
+}
+
+#opening-right-map{
+	height:50%;
+}
+
+
+
+.map-info{
+    width:100%;
+}
+
+.map_tool{
+    position:absolute;
+	right:5%;
+	top:5%;
+	//padding-right:30;
+	//padding-top:15;
+	z-index:900;
+}
+
+#right-map-info{
+    margin-top:20px;
+}
+
+.bar_base_div *{
+  padding:0;
+}
+
+.bar_base_div{
+  width:100%;
+  font-size:14px;
+}
+
+.bar_base_div:hover{
+  cursor:pointer;
+  color:rgb(255, 99, 132);
+}
+
+.bar_base_div:hover  .index_bar_color{
+  background-color:rgb(255, 99, 132);
+}
+
+.index_bar_color{
+  height:14px;
+  background-color:RGB(111,203,218);
+  width:1%;
+}
+
+.bar_base_div *{
+      font-size:12px;
+  }
+
+#right-map-stat-info{
+    margin-top:10px;
+    color:RGB(255, 99, 132);
+}
