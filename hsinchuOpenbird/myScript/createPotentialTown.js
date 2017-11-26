@@ -81,7 +81,7 @@ function createTownPolygon(boundary,source_properties,mape_type) {
 			town.properties[town_properties[i]] = source_properties[town_properties[i]];
 		};
 		town_object_list.push(town);
-
+        
 		google.maps.event.addListener(town,"mouseover",function(){
 	        town.setOptions({
 	            strokeColor : "#FF0000",
@@ -90,6 +90,7 @@ function createTownPolygon(boundary,source_properties,mape_type) {
 	        });
 	
 	    });
+		
 		
 	    google.maps.event.addListener(town,"mouseout",function(){
 	        town.setOptions({
