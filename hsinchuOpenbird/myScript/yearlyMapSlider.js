@@ -15,7 +15,7 @@ legend_str += '<div class="legend_div" style="background-color:' + industry_colo
 $("#test").append(legend_str);
 	
 var step = 2011;
-var id = setInterval(frame, 2016);
+var id = setInterval(frame, 1500);
 function frame() {
       if (step > max_step) {
         clearInterval(id);
@@ -27,11 +27,21 @@ function frame() {
 };
 };
 function draw_color_by_main_industry(year){
+	
+clear_all();
+var legend_str="";
+legend_str += '<div class="legend_div" style="background-color:' + industry_color["A101"] +  ';">' + property_chinese["A101"] +  '</div>';
+legend_str += '<div class="legend_div" style="background-color:' + industry_color["A102"] +  ';">' + property_chinese["A102"] +  '</div>';
+legend_str += '<div class="legend_div" style="background-color:' + industry_color["A103"] +  ';">' + property_chinese["A103"] +  '</div>';
+legend_str += '<div class="legend_div" style="background-color:' + industry_color["A104"] +  ';">' + property_chinese["A104"] +  '</div>';
+$("#test").append(legend_str);
+$("#test").append('<p>' + year + '</p>');
+	
 	rec_object_list.forEach((rec) => {
 		rec.setOptions({
 			fillOpacity:0
 		});
-		var industry = rec.properties[main_industry_col[year]];
+		var industry = rec.properties[main_industry_col[year]].substring(5,9);
 		var present_color =  industry_color[industry];
 		rec.setOptions({
 			fillColor:present_color,
