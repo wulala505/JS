@@ -1,6 +1,6 @@
 網站們 : 
 
-首頁 : https://togetherhoo.github.io/JS/hsinchuOpenbird/index.html
+首頁(兼簡報) : https://togetherhoo.github.io/JS/hsinchuOpenbird/index.html
 
 區域基本屬性分析 : https://togetherhoo.github.io/JS/hsinchuOpenbird/potential.html
 
