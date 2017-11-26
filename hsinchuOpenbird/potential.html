@@ -239,8 +239,15 @@ function initMap() {
 ///////////////////////////////////End of initMap()////////////////////////////////////// 
 
 function pop_heat_map(heat_type){
-
+class1_object = [];
+class2_object = [];
+class3_object = [];
+class4_object = [];
+class5_object = [];
+class6_object = [];
+class7_object = [];
 	clear_all();
+	/*
 	var lengend_str = "";
 	lengend_str += '<p>' + property_chinese[heat_type] + '</p>';
 	lengend_str += '<div class="legend_div" style="background-color:' + ingradient_colors[0] +';" onclick="show_by_class(7)"></div>';
@@ -251,6 +258,7 @@ function pop_heat_map(heat_type){
 	lengend_str += '<div class="legend_div" style="background-color:' + ingradient_colors[5] +';" onclick="show_by_class(2)"></div>';
 	lengend_str += '<div class="legend_div" style="background-color:' + ingradient_colors[6] +';" onclick="show_by_class(1)"></div>';
 	$("#test").append(lengend_str);
+	*/
 	
 	var maxHeatValue = d3.max(pr_list[heat_type]);
 	var minHeatValue = d3.min(pr_list[heat_type]);
@@ -319,7 +327,19 @@ function pop_heat_map(heat_type){
 		rec.setOptions({
 			fillOpacity:0.8
 		});
-	});	
+	});
+    
+    var lengend_str = "";
+	lengend_str += '<p>' + property_chinese[heat_type] + '</p>';
+	lengend_str += '<div class="legend_div" style="background-color:' + ingradient_colors[0] +';" onclick="show_by_class(7)">' + (minHeatValue + heatInterval * 6).toFixed(2) + "~" + maxHeatValue.toFixed(2) + '</div>';
+	lengend_str += '<div class="legend_div" style="background-color:' + ingradient_colors[1] +';" onclick="show_by_class(6)">' + (minHeatValue + heatInterval * 5).toFixed(2) + "~" + (minHeatValue + heatInterval * 6).toFixed(2) + '</div>';
+	lengend_str += '<div class="legend_div" style="background-color:' + ingradient_colors[2] +';" onclick="show_by_class(5)">' + (minHeatValue + heatInterval * 4).toFixed(2) + "~" + (minHeatValue + heatInterval * 5).toFixed(2) + '</div>';
+	lengend_str += '<div class="legend_div" style="background-color:' + ingradient_colors[3] +';" onclick="show_by_class(4)">' + (minHeatValue + heatInterval * 3).toFixed(2) + "~" + (minHeatValue + heatInterval * 4).toFixed(2) + '</div>';
+	lengend_str += '<div class="legend_div" style="background-color:' + ingradient_colors[4] +';" onclick="show_by_class(3)">' + (minHeatValue + heatInterval * 2).toFixed(2) + "~" + (minHeatValue + heatInterval * 3).toFixed(2) + '</div>';
+	lengend_str += '<div class="legend_div" style="background-color:' + ingradient_colors[5] +';" onclick="show_by_class(2)">' + (minHeatValue + heatInterval * 1).toFixed(2) + "~" + (minHeatValue + heatInterval * 2).toFixed(2) + '</div>';
+	lengend_str += '<div class="legend_div" style="background-color:' + ingradient_colors[6] +';" onclick="show_by_class(1)">' + "0" + "~" + (minHeatValue + heatInterval * 1).toFixed(2) + '</div>';
+	$("#test").append(lengend_str);
+    	
 };
 				
 function show_by_class(class_num){
