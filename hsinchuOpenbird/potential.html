@@ -75,6 +75,16 @@
 #test{
     margin-top:20px;
 }
+
+
+.right_panel{
+    opacity:0;
+}
+
+.hex-switch{
+    opacity:0;
+}
+
  </style> 
  
 </head>
@@ -104,12 +114,7 @@
 
 <div class="container-fluid" style="height:100%">
   <div class="row" style="height:100%">
-    <!--
-	<div class="col-md-12 head-banner" style="height:10%">
-       <label style="text-align:center">新竹市產業發展潛力分析地圖</label>
-    </div>
-	-->
-	
+
 	<div class="col-md-12 col-xs-12" id="map">
     </div>
 	
@@ -123,23 +128,19 @@
 		<div class="dropdown">
             <button onclick="myDropdownFunction()" class="btn dropbtn">選擇屬性</button>
               <div id="myDropdown" class="dropdown-content">
-                <!--<h5>人口</h5>-->
-                
-				<!--<h5>商業登記</h5>-->
                 <label onclick="pop_heat_map('ccn_pr')">開業數</label>
 				<label onclick="pop_heat_map('closed_rat')">歇業率</label>
-				<!--<h5>2017年消費指數</h5>-->
                 <label onclick="pop_heat_map('rec_a_2017')">消費強度</label>
 				<label onclick="pop_heat_map('bet_pr')">路網連結度</label>
 				<label onclick="pop_heat_map('pop_pr')">總人口數</label>
 				<label onclick="pop_heat_map('dependency')">扶養比</label>
 				<label onclick="pop_heat_map('childhood')">幼年人口比</label>
 				<label onclick="pop_heat_map('adult')">壯年人口比</label>
-				<label onclick="pop_heat_map('elderly')">老年人口比</label>
-				
+				<label onclick="pop_heat_map('elderly')">老年人口比</label>				
               </div>
         </div>
-		<div class="btn btn-primary" onclick="show_all_class()">顯示全部</div>
+		<div class="btn btn-primary hex-switch" onclick="show_all_class()">顯示全部網格</div>
+		<div class="btn btn-primary hex-switch" onclick="close_all_class()">關閉全部網格</div>
 	  </div>
 	  
 	  <div id = "test">
@@ -163,17 +164,6 @@ var households_list;
 //var infoWindow;
 var rank;
 var pr;
-/*
-var ingradient_colors = [
-    "RGB(68,100,160)",
-	"RGB(127,146,174)",
-	"RGB(198,199,191)",
-	"RGB(252,240,203)",
-	"RGB(242,196,163)",
-	"RGB(227,143,114)",
-	"RGB(212,89,65)",
-];
-*/
 
 var ingradient_colors = [
     "RGB(212,89,65)",
@@ -222,8 +212,8 @@ function clear_all(){
 ///////////////////////////////////Start of initMap()//////////////////////////////////////
 function initMap() {
     clear_all();
-    //$("#test").text("");
-	//window.myBar.destroy();
+	$(".right_panel").css("opacity","0");
+	$(".hex-switch").css("opacity","0");
     map = new google.maps.Map(document.getElementById('map'), {
           zoom: 10,
           center: {lat: 24.786005, lng:120.950411},
@@ -239,42 +229,21 @@ function initMap() {
 ///////////////////////////////////End of initMap()////////////////////////////////////// 
 
 function pop_heat_map(heat_type){
-class1_object = [];
-class2_object = [];
-class3_object = [];
-class4_object = [];
-class5_object = [];
-class6_object = [];
-class7_object = [];
+    class1_object = [];
+    class2_object = [];
+    class3_object = [];
+    class4_object = [];
+    class5_object = [];
+    class6_object = [];
+    class7_object = [];
 	clear_all();
-	/*
-	var lengend_str = "";
-	lengend_str += '<p>' + property_chinese[heat_type] + '</p>';
-	lengend_str += '<div class="legend_div" style="background-color:' + ingradient_colors[0] +';" onclick="show_by_class(7)"></div>';
-	lengend_str += '<div class="legend_div" style="background-color:' + ingradient_colors[1] +';" onclick="show_by_class(6)"></div>';
-	lengend_str += '<div class="legend_div" style="background-color:' + ingradient_colors[2] +';" onclick="show_by_class(5)"></div>';
-	lengend_str += '<div class="legend_div" style="background-color:' + ingradient_colors[3] +';" onclick="show_by_class(4)"></div>';
-	lengend_str += '<div class="legend_div" style="background-color:' + ingradient_colors[4] +';" onclick="show_by_class(3)"></div>';
-	lengend_str += '<div class="legend_div" style="background-color:' + ingradient_colors[5] +';" onclick="show_by_class(2)"></div>';
-	lengend_str += '<div class="legend_div" style="background-color:' + ingradient_colors[6] +';" onclick="show_by_class(1)"></div>';
-	$("#test").append(lengend_str);
-	*/
-	
+	$(".hex-switch").css("opacity","1");
 	var maxHeatValue = d3.max(pr_list[heat_type]);
 	var minHeatValue = d3.min(pr_list[heat_type]);
 	var heatInterval = (maxHeatValue - minHeatValue) / 7;
 	
-	console.log("pr_list[heat_type]: ",pr_list[heat_type]);
-	console.log("minHeatValue: ",minHeatValue, "maxHeatValue: ",maxHeatValue,"heatInterval: ",heatInterval);
-	
-	
     rec_object_list.forEach((rec) => {
 	    google.maps.event.clearInstanceListeners(rec); //移除事件
-		
-		//rank = population_list.indexOf(rec.properties["population"]) + 1;
-        //pr = Math.round(((population_list.length - rank) / (population_list.length) * 100));
-		
-		//pr = rec.properties["population"] / 100;
 		
 		rec.setOptions({
 			    strokeColor : "RGB(250,250,250)",
@@ -423,6 +392,15 @@ function show_all_class(){
 			    strokeColor : "RGB(250,250,250)",
                 strokeWeight: 0.5,
 				fillOpacity:0.8
+			});
+	});
+};
+
+function close_all_class(){
+    rec_object_list.forEach((rec) => {		
+		rec.setOptions({
+		        strokeWeight:0,
+				fillOpacity:0
 			});
 	});
 };

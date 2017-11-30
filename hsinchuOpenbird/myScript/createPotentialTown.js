@@ -8,28 +8,7 @@ var town_properties = [
 "y"
 ];
 
-//var basicValue = ["comm_num","closed_rat","period_mea","population","betweeness","rent_mean","rec_a_2017","pop_pr","ccn_pr"];
 var basicValue = ["closed_rat","rec_a_2017","pop_pr","ccn_pr","rent_pr","dependency","childhood","adult","elderly","bet_pr"];
-
-/*
-"aging_inde": 35.7142857143,
-        "dependency": 17.1428571429,
-        "childhood": 7.44680851065,
-        "adult": 87.2340425532,
-        "elderly": 5.31914893615,
-        "rec_n_2014": 99,
-        "rec_a_2014": 29,
-        "rec_c_2014": "零售業",
-        "rec_n_2015": 30,
-        "rec_a_2015": 30,
-        "rec_c_2015": "零售業",
-        "rec_n_2016": 0,
-        "rec_a_2016": 0,
-        "rec_c_2016": "",
-        "rec_n_2017": 30,
-        "rec_a_2017": 29,
-        "rec_c_2017": "零售業"
-*/
 
 var propertyChar;
 var pr_list = {};
@@ -123,6 +102,7 @@ function createTownPolygon(boundary,source_properties,mape_type) {
 	            error:function(){
                 },
             });
+			$(".right_panel").css("opacity","1");
 			town_object_list.forEach((val) => {
 	    	    val.setMap(null);
 	    	});
@@ -159,46 +139,7 @@ function createRecs(mape_type){
 		for( var k=0;k<basicValue_len;k++){
 			pr_list[ basicValue[k] ].push(rec.properties[ basicValue[k] ]);
 		};
-		/*
-		pr_list["closed_rat"].push(rec.properties["closed_rat"]);
-		pr_list["rec_a_2017"].push(rec.properties["rec_a_2017"]);
-		pr_list["pop_pr"].push(rec.properties["pop_pr"]);
-		pr_list["ccn_pr"].push(rec.properties["ccn_pr"]);
-		pr_list["rent_pr"].push(rec.properties["rent_pr"]);
-		pr_list["rent_pr"].push(rec.properties["rent_pr"]);
-		*/
-		/*
-		pr_list["comm_num"].push(rec.properties["comm_num"]);
-		pr_list["period_mea"].push(rec.properties["period_mea"]);
-		pr_list["population"].push(rec.properties["population"]);
-		pr_list["closed_rat"].push(rec.properties["closed_rat"]);
-		pr_list["betweeness"].push(rec.properties["betweeness"]);
-		pr_list["rent_mean"].push(rec.properties["rent_mean"]);
-		pr_list["rec_a_2017"].push(rec.properties["rec_a_2017"]);
-		pr_list["pop_pr"].push(rec.properties["pop_pr"]);
-		pr_list["ccn_pr"].push(rec.properties["ccn_pr"]);
-		*/
     };
-	
-	/*
-	comm_nummax = d3.max(pr_list["comm_num"]);
-	closed_ratmax = d3.max(pr_list["closed_rat"]);
-	//period_meamax = d3.max(pr_list["period_mea"]);
-	period_meamax = 54;
-	populationmax = d3.max(pr_list["population"]);
-	betweenessmax = d3.max(pr_list["betweeness"]);
-	rent_meanmax = d3.max(pr_list["rent_mean"]);
-	rec_a_2017max = d3.max(pr_list["rec_a_2017"]);
-	
-	comm_nummean = d3.mean(pr_list["comm_num"]);
-	closed_ratmean = d3.mean(pr_list["closed_rat"]);
-	period_meamean = d3.mean(pr_list["period_mea"]);
-	populationmean = d3.mean(pr_list["population"]);
-	betweenessmean = d3.mean(pr_list["betweeness"]);
-	rent_meanmean = d3.mean(pr_list["rent_mean"]);
-	rec_a_2017mean = d3.mean(pr_list["rec_a_2017"]);
-	*/
-	
 };
  
  
@@ -213,10 +154,8 @@ function createRecs(mape_type){
 			fillOpacity:0,
 		    map:map
 	    });
-		
-		rectangle.properties = {"all_year":{"1990":{}}};
 		basicValue_len = basicValue.length;
-		
+		rectangle.properties={};
 		for(var i = 0 ; i < basicValue_len ; i++){
 			rectangle.properties[basicValue[i]] = source_properties[basicValue[i]];
 			var year = String(basicValue[i].substring(1,5));
@@ -226,7 +165,7 @@ function createRecs(mape_type){
 		};
 		
 		rec_object_list.push(rectangle);
-
+        /*
 		google.maps.event.addListener(rectangle,"mouseover",function(){
 	    rectangle.setOptions({
 	    strokeColor : "#FF0000",
@@ -247,9 +186,6 @@ function createRecs(mape_type){
 			
 	    });
         google.maps.event.addListener(rectangle, "click", function() { 
-            
-			//console.log("rectangle.properties: ",rectangle.properties );
-			
 			rec_object_list.forEach((val) => {
 	    	    val.setOptions({
 	    		    fillColor:"#000",
@@ -263,5 +199,6 @@ function createRecs(mape_type){
 	    		fillOpacity:0.6
 	        });
         });
+		*/
     return rectangle;  
 }

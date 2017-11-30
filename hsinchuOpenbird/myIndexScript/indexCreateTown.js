@@ -345,7 +345,7 @@ function createInfo(rectangle){
 		            elem.style.width = '1%';
 		        }
 		        else{
-                    if (bar_width == max_width) {
+                    if (bar_width >= max_width) {
                         clearInterval(id);
                     } 
 					else {

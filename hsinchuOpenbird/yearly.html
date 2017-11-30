@@ -185,7 +185,7 @@ function initMap() {
 function chart_js_doughnut(doughnutData,year){
 	//var year = String(elem.id.substring(4,9));
 	//console.log("year: ",year);
-
+    $("#canvas_container").empty();
 	doughnutData["datasets"][0]["data"][0] = all_year_data[year]["A101"];
 	doughnutData["datasets"][0]["data"][1] = all_year_data[year]["A102"];
 	doughnutData["datasets"][0]["data"][2] = all_year_data[year]["A103"];
