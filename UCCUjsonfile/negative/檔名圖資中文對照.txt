@@ -1,0 +1,3 @@
+Landslide_small       : 土石流潛勢影響範圍
+Subsidence_small      : 嚴重地層下陷地區範圍
+Water_pollution_small : 水汙染管制範圍
