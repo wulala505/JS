@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>農地分析地圖</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" rel="stylesheet">
+
+<script src="https://d3js.org/d3.v3.min.js"></script>
+<!--
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.bundle.js"></script>
+-->
+
+<!--自定義css-->
+<link href="css/Earthuccu.css" rel="stylesheet">
+
+<!--自定義java script-->
+<script src="script/earth/earth_get_geojson.js"></script>
+<script src="script/earth/earth_myDropdown.js"></script>
+
+ <style>
+.legend_div{
+    width:80%;
+	margin:0 auto;
+	margin-bottom:5px;
+	color:white;
+	text-align:center;
+	font-size:14px;
+}
+
+.legend_div:hover{
+    opacity:0.7;
+	cursor:pointer;
+}
+ </style> 
+ 
+</head>
+ 
+ 
+ 
+<body>
+<div class="container-fluid" style="height:100%">
+    
+	<div class="nav_item">
+        <div class="topnav" id="myTopnav">      
+	      <a href="farm.html">農地分析</a>
+          <a href="earth.html" class="focused_topnav_a">土壤分析</a>
+        </div>
+    </div>
+
+	<div class="dropdown" style="margin:0 auto;">
+                <button onclick="myDropdownFunction()" class="btn dropbtn">選擇屬性</button>
+                    <div id="myDropdown" class="dropdown-content">
+                        <label onclick="drawEarthProperty('ph')">表土酸鹼度</label>
+                        <label onclick="drawEarthProperty('sintai')">土壤形態</label>
+                        <label onclick="drawEarthProperty('drainage')">排水等級</label>
+                        <label onclick="drawEarthProperty('shyrhui')">石灰性</label>
+                        <label onclick="drawEarthProperty('slope')">坡度</label>
+                        <label onclick="drawEarthProperty('geo1')">第一層質地(0~30cm)</label>
+                        <label onclick="drawEarthProperty('geo2')">第二層質地(30~60cm)</label>
+                        <label onclick="drawEarthProperty('geo3')">第三層質地(60~90cm)</label>
+                        <label onclick="drawEarthProperty('geo4')">第四層質地(90~150cm)</label>
+                        <label onclick="drawEarthProperty('adm')">管理組別</label>						
+                    </div>
+            </div>
+	
+	<div class="row" style="height:80%">
+	    <div class="col-md-12" style="height:100%">
+            <div id="map">
+			</div>
+			<button class="btn btn-warning" id="back_btn" onclick="initMap()">返回全區</button>
+		</div>
+		
+		<div class="right-filter">
+			<table style="width:100%;">
+			    <tr>
+				    <td style="width:50px;">
+					    <label class="switch toggle-item">
+                          <input type="checkbox" id="landslide-toggle" onclick="switch_nagative_factors(this.id)">
+                          <span class="slider round"></span>
+                        </label>
+					</td>
+					<td>
+					土石流潛勢地區
+					</td>
+				</tr>
+				
+				<tr>
+				    <td style="width:50px;">
+					    <label class="switch toggle-item">
+                          <input type="checkbox" id="subsidence-toggle" onclick="switch_nagative_factors(this.id)">
+                          <span class="slider round"></span>
+                        </label>
+					</td>
+					<td>
+					地層下陷區
+					</td>
+				</tr>
+				
+				<tr>
+				    <td style="width:50px;">
+					    <label class="switch toggle-item">
+                          <input type="checkbox" id="water-toggle" onclick="switch_nagative_factors(this.id)">
+                          <span class="slider round"></span>
+                        </label>
+					</td>
+					<td>
+					水汙染地區
+					</td>
+				</tr>
+				
+				<tr>
+				    <td style="width:50px;">
+					    <label class="switch toggle-item">
+                          <input type="checkbox" id="garbage-toggle" onclick="switch_nagative_factors(this.id)">
+                          <span class="slider round"></span>
+                        </label>
+					</td>
+					<td>
+					垃圾掩埋場
+					</td>
+				</tr>
+				
+				<tr>
+				    <td style="width:50px;">
+					    <label class="switch toggle-item">
+                          <input type="checkbox" id="incinerator-toggle" onclick="switch_nagative_factors(this.id)">
+                          <span class="slider round"></span>
+                        </label>
+					</td>
+					<td>
+					焚化爐煙囪
+					</td>
+				</tr>
+				
+				<tr>
+				    <td style="width:50px;">
+					    <label class="switch toggle-item">
+                          <input type="checkbox" id="factory-toggle" onclick="switch_nagative_factors(this.id)">
+                          <span class="slider round"></span>
+                        </label>
+					</td>
+					<td>
+					工廠分布
+					</td>
+				</tr>
+				
+			</table>
+			
+			<div id="right_legend">
+			</div>
+
+		</div>
+		
+		<div class="right-filter-bg">
+		</div>
+    </div>
+	
+	<div class="row second_part">
+	    <div class="offset-md-2 col-md-4">
+		    
+			<div id="farm-attribute-top">
+			    <h4>您的土地</h4>
+		        <!--
+				<div id="farm-map">
+			    </div>
+				-->
+			</div>
+		
+		    <div id="farm_attribute_container">
+		    </div>
+			
+		</div>
+		
+		<div class="col-md-4">
+		
+		<!--
+		<div class="dropdown">
+            <button onclick="myDropdownFunction()" class="btn dropbtn">選擇欲種作物</button>
+              <div id="myDropdown" class="dropdown-content">
+                <label onclick="plantInformation('筊白筍')">筊白筍</label>			
+              </div>
+        </div>
+		-->
+		
+		<div id="plant_attribute_container">
+
+		</div>
+		</div>
+	</div>
+	
+</div>
+  
+ 
+<script>
+var myColor = {
+    'blue':'rgb(66,186,207)',
+	'red':'rgb(221, 53, 45)',
+	'grey':'RGB(204, 204, 204)',
+	'green':'RGB(182, 211, 97)',
+	'light_blue':'RGB(120, 209, 224)',
+	'light_red':'RGB(235, 105, 95)',
+	'earth':'RGB(173, 169, 117)'
+};
+var map;
+var landslide,subsidence,water_pollution,garbage,incinerator,fusion_table;
+
+function switch_nagative_factors(layer_type){
+    var isChecked = document.getElementById(layer_type).checked;
+	switch (layer_type){
+	    case 'landslide-toggle':
+            if(isChecked==true){
+	            landslide.setStyle({
+	                visible:true,
+	        		strokeOpacity:0
+	            });
+	        }
+	        else{
+	            landslide.setStyle({
+	                visible:false,
+	        		strokeOpacity:0
+	            });
+	        }
+			break;
+		case 'subsidence-toggle':
+            if(isChecked==true){
+	            subsidence.setStyle({
+	                visible:true,
+	        		strokeOpacity:0
+	            });
+	        }
+	        else{
+	            subsidence.setStyle({
+	                visible:false,
+	        		strokeOpacity:0
+	            });
+	        }
+			break;
+		case 'water-toggle':
+            if(isChecked==true){
+	            water_pollution.setStyle({
+	                visible:true,
+	        		strokeOpacity:0
+	            });
+	        }
+	        else{
+	            water_pollution.setStyle({
+	                visible:false,
+	        		strokeOpacity:0
+	            });
+	        }
+			break;
+		case 'garbage-toggle':
+            if(isChecked==true){
+	            garbage.setStyle({
+	                visible:true
+	            });
+	        }
+	        else{
+	            garbage.setStyle({
+	                visible:false
+	            });
+	        }
+			break;
+		case 'incinerator-toggle':
+            if(isChecked==true){
+			    console.log("incinerator: ",incinerator);
+	            incinerator.setStyle({
+	                visible:true
+	            });
+	        }
+	        else{
+	            incinerator.setStyle({
+	                visible:false
+	            });
+	        }
+			break;
+        case 'factory-toggle':
+            if(isChecked==true){
+	            fusion_table.setMap(map);
+				console.log("fusion_table: ",fusion_table);
+	        }
+	        else{
+	            fusion_table.setMap(null);
+	        }
+			break;		
+	};
+}
+
+///////////////////////////////////Start of initMap()//////////////////////////////////////
+function initMap() {
+    $("#plant_attribute_container").text("");
+	$("#farm_attribute_container").text("");
+	$("#farm-attribute-top").css("opacity",0);
+	
+    map = new google.maps.Map(document.getElementById('map'), {
+          zoom: 10,
+          center: {lat: 23.094644, lng:120.214910},
+		  styles:map_style_json,
+		  mapTypeControlOptions: {
+              style: google.maps.MapTypeControlStyle.HORIZONTAL_BAR,
+              position: google.maps.ControlPosition.TOP_CENTER
+          },
+		  zoomControlOptions: {
+              position: google.maps.ControlPosition.LEFT_BOTTOM
+          },
+    });
+	
+	/*
+	farmMap = new google.maps.Map(document.getElementById('farm-map'), {
+          zoom: 10,
+          center: {lat: 23.024644, lng:120.214910}
+    });
+	*/
+	
+	draw_polygon(tainan_earth);
+	
+	landslide = new google.maps.Data({
+		map:map
+	});
+	landslide.loadGeoJson('https://togetherhoo.github.io/JS/UCCUjsonfile/negative/Landslide_small.json');
+	landslide.setStyle({
+		visible:false,
+		fillOpacity:0.5,
+		strokeOpacity:0
+	});
+	
+	subsidence = new google.maps.Data({
+		map:map
+	});
+	subsidence.loadGeoJson('https://togetherhoo.github.io/JS/UCCUjsonfile/negative/Subsidence_small.json');
+	subsidence.setStyle({
+		visible:false,
+		fillOpacity:0.5,
+		strokeOpacity:0
+	});
+	
+	water_pollution = new google.maps.Data({
+		map:map
+	});
+	water_pollution.loadGeoJson('https://togetherhoo.github.io/JS/UCCUjsonfile/negative/Water_pollution_small.json');
+	water_pollution.setStyle({
+		visible:false,
+		fillOpacity:0.5,
+		strokeOpacity:0
+	});
+	
+	garbage = new google.maps.Data({
+		map:map
+	});
+	garbage.loadGeoJson('https://togetherhoo.github.io/JS/UCCUjsonfile/negative/Garbage.json');
+	garbage.setStyle({
+		visible:false
+	});
+	
+	var incinerator_icon = {
+	    size: new google.maps.Size(34, 35),
+	    url:"https://togetherhoo.github.io/JS/incinerator.png"
+	};
+	incinerator = new google.maps.Data({
+		map:map
+	});
+	incinerator.loadGeoJson('https://togetherhoo.github.io/JS/UCCUjsonfile/negative/Incinerator.json');
+	incinerator.setStyle({
+		visible:false,
+		icon:incinerator_icon
+	});
+	
+	fusion_table = new google.maps.FusionTablesLayer({
+	    query:{
+		    select: '工廠地址',
+			from:'1DD9EO2uDRb4zxNOWKjgHZ-Nxde0VOhQAt2HUn4Go'
+		}
+	});
+};
+
+function plantInformation(plant){
+    $("#plant_attribute_container").text("");
+	var plant_attribute_str = "";
+	plant_attribute_str += '<h4>欲種作物 : ' + plant + '</h4>';
+	plant_attribute_str += '<img class="img-plant" src="img/jiaobaisun.JPG"></img> ';
+	plant_attribute_str += '<p>';
+	plant_attribute_str += "土地須全泥土狀態：筊白筍喜好在軟土多水的泥凝地方生長，就如同水耕栽種一般，硬地或過多石頭比較不適合栽種，水源必須源源不斷：種植筊白筍需全程水源不斷，水源不夠容易造成筊白筍植株弱小、莖心不大、黑心、提早老化。水源最好是乾淨無污染，全時流動。日照必須充足：日照時間最好全日照，日照不足產量與品質會下降。肥料的供應，筊白筍算蠻吃肥料的，種植後約一個月給一次肥，直到6個月間每20-30天給一次肥，尤其在收割期間肥料需15-20天給一次。施肥期間須把田裡的進水與排水系統關閉，以免肥料隨著水流沖走而浪費，再把田裡的水位降低一些再施肥，好讓植物快速吸收到養分 新鮮多汁的筊白筍，每天採用新鮮現採的筊白筍，烤出來多汁多清甜。";
+	plant_attribute_str += '</p>';
+	$("#plant_attribute_container").append(plant_attribute_str);
+};
+
+///////////////////////////////////End of initMap()////////////////////////////////////// 
+
+map_style_json =  [ {
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "color": "#f5f5f5"
+      }
+    ]
+  },
+  {
+    "elementType": "labels.icon",
+    "stylers": [
+      {
+        "visibility": "off"
+      }
+    ]
+  },
+  {
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#616161"
+      }
+    ]
+  },
+  {
+    "elementType": "labels.text.stroke",
+    "stylers": [
+      {
+        "color": "#f5f5f5"
+      }
+    ]
+  },
+  {
+    "featureType": "administrative.land_parcel",
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#bdbdbd"
+      }
+    ]
+  },
+  {
+    "featureType": "poi",
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "color": "#eeeeee"
+      }
+    ]
+  },
+  {
+    "featureType": "poi",
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#757575"
+      }
+    ]
+  },
+  {
+    "featureType": "poi.park",
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "color": "#e5e5e5"
+      }
+    ]
+  },
+  {
+    "featureType": "poi.park",
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#9e9e9e"
+      }
+    ]
+  },
+  {
+    "featureType": "road",
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "color": "#ffffff"
+      }
+    ]
+  },
+  {
+    "featureType": "road.arterial",
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#757575"
+      }
+    ]
+  },
+  {
+    "featureType": "road.highway",
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "color": "#dadada"
+      }
+    ]
+  },
+  {
+    "featureType": "road.highway",
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#616161"
+      }
+    ]
+  },
+  {
+    "featureType": "road.local",
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#9e9e9e"
+      }
+    ]
+  },
+  {
+    "featureType": "transit.line",
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "color": "#e5e5e5"
+      }
+    ]
+  },
+  {
+    "featureType": "transit.station",
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "color": "#eeeeee"
+      }
+    ]
+  },
+  {
+    "featureType": "water",
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "color": "#c9c9c9"
+      }
+    ]
+  },
+  {
+    "featureType": "water",
+    "elementType": "geometry.fill",
+    "stylers": [
+      {
+        "color": "#63cfd8"
+      }
+    ]
+  },
+  {
+    "featureType": "water",
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#9e9e9e"
+      }
+    ]
+  }
+];
+</script>
+	
+<script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDW2R3JvnGX3WPGyv2NOH_TbprbOIFmBuc&libraries=visualization&callback=initMap">
+</script>
+
+</body>
+</html>

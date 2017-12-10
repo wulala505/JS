@@ -1,0 +1,616 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>農地分析地圖</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.3.0/Chart.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" rel="stylesheet">
+
+    <!--
+    <script src="https://d3js.org/d3.v3.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.bundle.js"></script>
+    -->
+    <!--自定義css-->
+    <link href="css/uccu.css" rel="stylesheet">
+    <link href="css/product.css" rel="stylesheet">
+
+    <!--自定義java script-->
+    <script src="script/get_geojson.js"></script>
+    <script src="script/myDropdown.js"></script>
+    <script src="script/productData.js"></script>
+    <style>
+    </style>
+</head>
+
+<body>
+    <div class="container-fluid" style="height:100%">
+
+        <div class="nav_item">
+            <div class="topnav" id="myTopnav">
+                <a href="farm.html" class="focused_topnav_a">農地分析</a>
+                <a href="earth.html">土壤分析</a>
+            </div>
+        </div>
+
+        <div class="row" style="height:80%">
+            <div class="col-md-12" style="height:100%">
+                <div id="map">
+                </div>
+                <button class="btn btn-warning" id="back_btn" onclick="initMap()">返回全區</button>
+            </div>
+
+            <div class="right-filter">
+                <table style="width:100%;">
+                    <tr>
+                        <td style="width:50px;">
+                            <label class="switch toggle-item">
+                                <input type="checkbox" id="landslide-toggle" onclick="switch_nagative_factors(this.id)">
+                                <span class="slider round"></span>
+                            </label>
+                        </td>
+                        <td>
+                            土石流潛勢地區
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td style="width:50px;">
+                            <label class="switch toggle-item">
+                                <input type="checkbox" id="subsidence-toggle" onclick="switch_nagative_factors(this.id)">
+                                <span class="slider round"></span>
+                            </label>
+                        </td>
+                        <td>
+                            地層下陷區
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td style="width:50px;">
+                            <label class="switch toggle-item">
+                                <input type="checkbox" id="water-toggle" onclick="switch_nagative_factors(this.id)">
+                                <span class="slider round"></span>
+                            </label>
+                        </td>
+                        <td>
+                            水汙染地區
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td style="width:50px;">
+                            <label class="switch toggle-item">
+                                <input type="checkbox" id="garbage-toggle" onclick="switch_nagative_factors(this.id)">
+                                <span class="slider round"></span>
+                            </label>
+                        </td>
+                        <td>
+                            垃圾掩埋場
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td style="width:50px;">
+                            <label class="switch toggle-item">
+                                <input type="checkbox" id="incinerator-toggle" onclick="switch_nagative_factors(this.id)">
+                                <span class="slider round"></span>
+                            </label>
+                        </td>
+                        <td>
+                            焚化爐煙囪
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td style="width:50px;">
+                            <label class="switch toggle-item">
+                                <input type="checkbox" id="factory-toggle" onclick="switch_nagative_factors(this.id)">
+                                <span class="slider round"></span>
+                            </label>
+                        </td>
+                        <td>
+                            工廠分布
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="right-filter-bg">
+            </div>
+        </div>
+
+        <div class="row second_part">
+            <div class="offset-md-1 col-md-4">
+
+                <div id="farm-attribute-top">
+                    <h4>您的田地</h4>
+                    <div id="farm-map">
+                    </div>
+                </div>
+
+                <div id="farm_attribute_container">
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="dropdown">
+                    <button onclick="myDropdownFunction()" class="btn dropbtn">選擇欲種作物</button>
+                    <div id="myDropdown" class="dropdown-content">
+                        <label onclick="plantInformation('0')">草莓</label>
+                        <label onclick="plantInformation('1')">芒果(愛文)</label>
+                        <label onclick="plantInformation('2')">芋頭</label>
+                        <label onclick="plantInformation('3')">文旦</label>
+                        <label onclick="plantInformation('4')">鳳梨(17號)</label>
+                    </div>
+                </div>
+                <div id="product_container" class="product_container">
+                    <div class="product_detail">
+                        <span class="product_name"></span>
+                    </div>
+                    <div class="product_detail">
+                        <img class="product_img" />
+                    </div>
+                    <div class="product_detail">
+                        <span class="title">量產期</span>
+                        <span class="content product_period"></span>
+                    </div>
+                    <div class="product_detail">
+                        <span class="title">生長溫度</span>
+                        <span class="content product_temperature"></span>
+                    </div>
+                    <div class="product_detail">
+                        <span class="title">日照</span>
+                        <span class="content product_light"></span>
+                    </div>
+                    <div class="product_detail">
+                        <span class="title">空氣濕度</span>
+                        <span class="content product_airMoisture"></span>
+                    </div>
+                    <div class="product_detail">
+                        <span class="title">土壤濕度</span>
+                        <span class="content product_moisture"></span>
+                    </div>
+                    <div class="product_detail">
+                        <span class="title">土壤特性</span>
+                        <span class="content product_soil"></span>
+                    </div>
+                    <div class="product_detail">
+                        <span class="title">土壤酸鹼值</span>
+                        <span class="content product_soilPh"></span>
+                    </div>
+                    <div class="product_detail">
+                        <span class="title">近三年平均價格</span>
+                        <span class="content product_price">
+                            <canvas id="priceChartContainer" width="370" height="200"></canvas>
+                        </span>
+                    </div>
+                    <div class="product_detail">
+                        <span class="title">作物小百科</span>
+                        <span class="content product_info"></span>
+                    </div>
+                </div>
+                <!--<div id="plant_attribute_container">
+                </div>-->
+            </div>
+        </div>
+    </div>
+
+    <script>
+
+        var myColor = {
+            'blue': 'rgb(66,186,207)',
+            'red': 'rgb(221, 53, 45)',
+            'grey': 'RGB(204, 204, 204)',
+            'green': 'RGB(182, 211, 97)',
+            'light_blue': 'RGB(120, 209, 224)',
+            'light_red': 'RGB(235, 105, 95)',
+            'earth': 'RGB(173, 169, 117)'
+        };
+        var map;
+        var landslide, subsidence, water_pollution, garbage, incinerator, fusion_table;
+
+        function switch_nagative_factors( layer_type ) {
+            var isChecked = document.getElementById( layer_type ).checked;
+            switch ( layer_type ) {
+                case 'landslide-toggle':
+                    if ( isChecked == true ) {
+                        landslide.setStyle( {
+                            visible: true,
+                            strokeOpacity: 0
+                        } );
+                    }
+                    else {
+                        landslide.setStyle( {
+                            visible: false,
+                            strokeOpacity: 0
+                        } );
+                    }
+                    break;
+                case 'subsidence-toggle':
+                    if ( isChecked == true ) {
+                        subsidence.setStyle( {
+                            visible: true,
+                            strokeOpacity: 0
+                        } );
+                    }
+                    else {
+                        subsidence.setStyle( {
+                            visible: false,
+                            strokeOpacity: 0
+                        } );
+                    }
+                    break;
+                case 'water-toggle':
+                    if ( isChecked == true ) {
+                        water_pollution.setStyle( {
+                            visible: true,
+                            strokeOpacity: 0
+                        } );
+                    }
+                    else {
+                        water_pollution.setStyle( {
+                            visible: false,
+                            strokeOpacity: 0
+                        } );
+                    }
+                    break;
+                case 'garbage-toggle':
+                    if ( isChecked == true ) {
+                        garbage.setStyle( {
+                            visible: true
+                        } );
+                    }
+                    else {
+                        garbage.setStyle( {
+                            visible: false
+                        } );
+                    }
+                    break;
+                case 'incinerator-toggle':
+                    if ( isChecked == true ) {
+                        incinerator.setStyle( {
+                            visible: true
+                        } );
+                    }
+                    else {
+                        incinerator.setStyle( {
+                            visible: false
+                        } );
+                    }
+                    break;
+                case 'factory-toggle':
+                    if ( isChecked == true ) {
+                        fusion_table.setMap( map );
+                    }
+                    else {
+                        fusion_table.setMap( null );
+                    }
+                    break;
+            };
+        }
+
+        ///////////////////////////////////Start of initMap()//////////////////////////////////////
+        function initMap() {
+            $( "#plant_attribute_container" ).text( "" );
+            $( "#farm_attribute_container" ).text( "" );
+            $( "#farm-attribute-top" ).css( "opacity", 0 );
+
+            map = new google.maps.Map( document.getElementById( 'map' ), {
+                zoom: 10,
+                center: { lat: 23.094644, lng: 120.214910 },
+                styles: map_style_json
+            } );
+
+            farmMap = new google.maps.Map( document.getElementById( 'farm-map' ), {
+                zoom: 10,
+				 mapTypeId: 'satellite',
+                center: { lat: 23.024644, lng: 120.214910 }
+            } );
+
+            draw_polygon( tainan_town, 'town' );
+
+            landslide = new google.maps.Data( {
+                map: map
+            } );
+            landslide.loadGeoJson( 'https://togetherhoo.github.io/JS/UCCUjsonfile/negative/Landslide_small.json' );
+            landslide.setStyle( {
+                visible: false,
+                fillOpacity: 0.5,
+                strokeOpacity: 0
+            } );
+
+            subsidence = new google.maps.Data( {
+                map: map
+            } );
+            subsidence.loadGeoJson( 'https://togetherhoo.github.io/JS/UCCUjsonfile/negative/Subsidence_small.json' );
+            subsidence.setStyle( {
+                visible: false,
+                fillOpacity: 0.5,
+                strokeOpacity: 0
+            } );
+
+            water_pollution = new google.maps.Data( {
+                map: map
+            } );
+            water_pollution.loadGeoJson( 'https://togetherhoo.github.io/JS/UCCUjsonfile/negative/Water_pollution_small.json' );
+            water_pollution.setStyle( {
+                visible: false,
+                fillOpacity: 0.5,
+                strokeOpacity: 0
+            } );
+
+            garbage = new google.maps.Data( {
+                map: map
+            } );
+            garbage.loadGeoJson( 'https://togetherhoo.github.io/JS/UCCUjsonfile/negative/Garbage.json' );
+            garbage.setStyle( {
+                visible: false
+            } );
+
+            var incinerator_icon = {
+                size: new google.maps.Size( 34, 35 ),
+                url: "https://togetherhoo.github.io/JS/incinerator.png"
+            };
+            incinerator = new google.maps.Data( {
+                map: map
+            } );
+            incinerator.loadGeoJson( 'https://togetherhoo.github.io/JS/UCCUjsonfile/negative/Incinerator.json' );
+            incinerator.setStyle( {
+                visible: false,
+                icon: incinerator_icon
+            } );
+
+            fusion_table = new google.maps.FusionTablesLayer( {
+                query: {
+                    select: '工廠地址',
+                    from: '1DD9EO2uDRb4zxNOWKjgHZ-Nxde0VOhQAt2HUn4Go'
+                }
+            } );
+        };
+
+        function plantInformation( productId ) {
+            $( ".product_container" ).show();
+            $( ".product_name" ).html( productData[productId]["Crop"] );
+            $( ".product_img" ).attr( "src", productData[productId]["Img"] );
+            $( ".product_period" ).html( productData[productId]["Period"] );
+            $( ".product_temperature" ).html( productData[productId]["Temperature"] );
+            $( ".product_light" ).html( productData[productId]["Light"] );
+            $( ".product_airMoisture" ).html( productData[productId]["AirMoisture"] );
+            $( ".product_moisture" ).html( productData[productId]["Moisture"] );
+            $( ".product_soil" ).html( productData[productId]["Soil"] );
+            $( ".product_soilPh" ).html( productData[productId]["PhMin"] + "~" + productData[productId]["PhMax"] );
+            //$( ".product_price" ).html( productData[productId]["AveragePrice"] + "元/公斤" );
+            $( ".product_info" ).html( productData[productId]["Info"] );
+
+            buildPriceChart( productData[productId]["Price2017"] , productData[productId]["Price2016"] , productData[productId]["Price2015"] );
+        };
+
+         function buildPriceChart( productPrice2017,productPrice2016,productPrice2015 ) {
+            $( '#priceChartContainer' ).replaceWith( '<canvas id="priceChartContainer"></canvas>' );
+            var options = {
+                type: 'bar',
+                data: {
+                    labels: ["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"],
+                    datasets: [
+                        {
+                            label: '2015年',
+                            data: productPrice2015,
+                            borderWidth: 1,
+                            backgroundColor: "#3e95cd"
+                        },                        {
+                            label: '2016年',
+                            data: productPrice2016,
+                            borderWidth: 1,
+                            backgroundColor: "#a439ce"
+                        },                        {
+                            label: '2017年',
+                            data: productPrice2017,
+                            borderWidth: 1,
+                            backgroundColor: "#1b9949"
+                        }
+                    ]
+                },
+                options: {
+                    tooltips: {
+                        enabled: true,
+                        mode: 'single',
+                        callbacks: {
+                            label: function ( tooltipItems, data ) {
+                                return tooltipItems.yLabel + '元/公斤';
+                            }
+                        }
+                    },
+                   
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                reverse: false,
+                                beginAtZero: true
+                            }
+                        }]
+                    }
+                }
+            }
+            var ctx = document.getElementById( 'priceChartContainer' ).getContext( '2d' );
+            new Chart( ctx, options );
+        }
+
+        ///////////////////////////////////End of initMap()//////////////////////////////////////
+
+        map_style_json = [{
+            "elementType": "geometry",
+            "stylers": [
+              {
+                  "color": "#f5f5f5"
+              }
+            ]
+        },
+          {
+              "elementType": "labels.icon",
+              "stylers": [
+                {
+                    "visibility": "off"
+                }
+              ]
+          },
+          {
+              "elementType": "labels.text.fill",
+              "stylers": [
+                {
+                    "color": "#616161"
+                }
+              ]
+          },
+          {
+              "elementType": "labels.text.stroke",
+              "stylers": [
+                {
+                    "color": "#f5f5f5"
+                }
+              ]
+          },
+          {
+              "featureType": "administrative.land_parcel",
+              "elementType": "labels.text.fill",
+              "stylers": [
+                {
+                    "color": "#bdbdbd"
+                }
+              ]
+          },
+          {
+              "featureType": "poi",
+              "elementType": "geometry",
+              "stylers": [
+                {
+                    "color": "#eeeeee"
+                }
+              ]
+          },
+          {
+              "featureType": "poi",
+              "elementType": "labels.text.fill",
+              "stylers": [
+                {
+                    "color": "#757575"
+                }
+              ]
+          },
+          {
+              "featureType": "poi.park",
+              "elementType": "geometry",
+              "stylers": [
+                {
+                    "color": "#e5e5e5"
+                }
+              ]
+          },
+          {
+              "featureType": "poi.park",
+              "elementType": "labels.text.fill",
+              "stylers": [
+                {
+                    "color": "#9e9e9e"
+                }
+              ]
+          },
+          {
+              "featureType": "road",
+              "elementType": "geometry",
+              "stylers": [
+                {
+                    "color": "#ffffff"
+                }
+              ]
+          },
+          {
+              "featureType": "road.arterial",
+              "elementType": "labels.text.fill",
+              "stylers": [
+                {
+                    "color": "#757575"
+                }
+              ]
+          },
+          {
+              "featureType": "road.highway",
+              "elementType": "geometry",
+              "stylers": [
+                {
+                    "color": "#dadada"
+                }
+              ]
+          },
+          {
+              "featureType": "road.highway",
+              "elementType": "labels.text.fill",
+              "stylers": [
+                {
+                    "color": "#616161"
+                }
+              ]
+          },
+          {
+              "featureType": "road.local",
+              "elementType": "labels.text.fill",
+              "stylers": [
+                {
+                    "color": "#9e9e9e"
+                }
+              ]
+          },
+          {
+              "featureType": "transit.line",
+              "elementType": "geometry",
+              "stylers": [
+                {
+                    "color": "#e5e5e5"
+                }
+              ]
+          },
+          {
+              "featureType": "transit.station",
+              "elementType": "geometry",
+              "stylers": [
+                {
+                    "color": "#eeeeee"
+                }
+              ]
+          },
+          {
+              "featureType": "water",
+              "elementType": "geometry",
+              "stylers": [
+                {
+                    "color": "#c9c9c9"
+                }
+              ]
+          },
+          {
+              "featureType": "water",
+              "elementType": "geometry.fill",
+              "stylers": [
+                {
+                    "color": "#63cfd8"
+                }
+              ]
+          },
+          {
+              "featureType": "water",
+              "elementType": "labels.text.fill",
+              "stylers": [
+                {
+                    "color": "#9e9e9e"
+                }
+              ]
+          }
+        ];
+    </script>
+
+    <script async defer
+            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDW2R3JvnGX3WPGyv2NOH_TbprbOIFmBuc&libraries=visualization&callback=initMap">
+    </script>
+</body>
+</html>
