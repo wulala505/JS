@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <script src="https://d3js.org/d3.v3.min.js"></script>
+    <style>
+      /* Always set the map height explicitly to define the size of the div
+       * element that contains the map. */
+      #map {
+        height: 100%;
+		width:70%;
+      }
+      /* Optional: Makes the sample page fill the window. */
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+	  div{
+	      float:left;
+	  }
+    </style>
+  </head>
+  <body>
+    <div id="map"></div>
+	
+	<div id="infoArea">
+	    <h1>Geodesign-TPE</h1>
+		<!--
+		<button class="btn">泡泡圖</button>
+		<button class="btn">熱區圖</button>
+		-->
+		<p id="property"></p>
+	</div>
+	
+    <script>
+	window.onload=function(){
+	
+	};
+      var map;
+      function initMap() {
+        map = new google.maps.Map(document.getElementById('map'), {
+          zoom: 7,
+          center: {lat: 23, lng: 123},
+          mapTypeId: 'terrain'
+        });
+
+        // Create a <script> tag and set the USGS URL as the source.
+        var script = document.createElement('script');
+
+        // This example uses a local copy of the GeoJSON stored at
+        // http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_week.geojsonp
+        //script.src = 'https://developers.google.com/maps/documentation/javascript/examples/json/earthquake_GeoJSONP.js';
+        script.src = 'https://togetherhoo.github.io/JS/Geodesign-TPE/FebEarthquack.js';
+		document.getElementsByTagName('head')[0].appendChild(script);
+
+        map.data.setStyle(function(feature) {
+          var magnitude = feature.getProperty('mag');
+		  var deepness = feature.getProperty('deep');
+          return {
+            icon: getCircle(magnitude,deepness)
+          };
+        });
+      }
+	  
+      function getCircle(magnitude,deepness) {
+	  var colors = d3.scale
+              .linear()
+              .domain([0,20])
+			  .range(['rgb(205,17,3)','rgb(255,215,93)']);
+			  //console.log("deep: ",deepness, " , color: " , colors(deepness));
+		return {
+          path: google.maps.SymbolPath.CIRCLE,
+          fillColor: colors(deepness),
+		  fillOpacity: .7,
+          scale: Math.pow(2, magnitude) / 2,
+          strokeColor: 'white',
+          strokeWeight: .5,
+		  clickale:true
+        };
+      }
+
+      function eqfeed_callback(results) {
+        
+		map.data.addGeoJson(results);
+		console.log(results);
+		console.log(results.features[0].properties.time);
+		
+		map.data.addListener('click', function(event) {
+		    var context = "";
+            context += '規模: ' + event.feature.getProperty('mag');
+			context += '震央深度: ' + event.feature.getProperty('deep');
+			context += '震央位置: ' + event.feature.getProperty('center');
+			document.getElementById('property').textContent = context;
+       });
+      }
+	    
+    </script>
+    <!--<script async defer
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDW2R3JvnGX3WPGyv2NOH_TbprbOIFmBuc&libraries=visualization&callback=initMap">
+    </script>-->
+	<script async defer
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDW2R3JvnGX3WPGyv2NOH_TbprbOIFmBuc&libraries=visualization&callback=initMap">
+    </script>
+  </body>
+</html>
