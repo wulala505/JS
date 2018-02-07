@@ -48,7 +48,7 @@
 
     <div class="row" style="height:100%;margin:0;">
 	    <div class="col-md-12 nav_title">
-		    <h1>Geodesign-TPE</h1>
+		    <h1>Geodesign-Taipei</h1>
 		</div>
 	    <div class="col-md-12" style="height:90%;">
             <div id="map"></div>
@@ -56,16 +56,9 @@
 		<div id="timeSerial">
 		    <button class="btn timeButton" onclick="playTime()">時間序列</button><label id="date"></label>
 		</div>
-	
-	    <!--
-		<div class="col-md-4" id="infoArea">
-		    <p id="property"></p>
-	    </div>
-		-->
-		
+	<a rel="license" href="http://creativecommons.org/licenses/by/3.0/tw/"><img alt="創用 CC 授權條款" style="border-width:0" src="https://i.creativecommons.org/l/by/3.0/tw/80x15.png" /></a>本著作係採用<a rel="license" href="http://creativecommons.org/licenses/by/3.0/tw/">創用 CC 姓名標示 3.0 台灣 授權條款</a>授權.	
 	</div>
 
-	
     <script>
       var map;
 	  var infoWindowList = [];
@@ -113,11 +106,12 @@
 		
 		map.data.addListener('click', function(event) {
 		    //console.log("event: ",event);
-		    var context = "";
+		    var context = "<div style='font-family:Microsoft JhengHei;font-size:1.2em'>";
 			context += '時間: ' + event.feature.getProperty('time') + "</br>";
-            context += '規模: ' + event.feature.getProperty('mag') + "</br>";
-			context += '震央深度: ' + event.feature.getProperty('deep') + "</br>";
+            context += '芮氏規模: ' + event.feature.getProperty('mag') + "</br>";
+			context += '震央深度: ' + event.feature.getProperty('deep') + " 公里</br>";
 			context += '震央位置: ' + event.feature.getProperty('center');
+			context += "</div>"
 			//document.getElementById('property').innerHTML = context;
 			var infowindow = new google.maps.InfoWindow({
                 content: context
@@ -134,15 +128,16 @@
 			    infowindow.setPosition(event.latLng);
                 infowindow.open(map);
 			}
-       });
+        });
       }
-	
 
     //時序功能
     var timeList = ["2月01日","2月02日","2月03日","2月04日","2月05日","2月06日","2月07日"] ;    
-	
 	function playTime(){
-	    
+	    if(infoWindowList.length>=1){
+			    infoWindowList[0].close();
+				infoWindowList=[];
+			}
 	    document.getElementById('date').innerHTML = "重新繪製中";
 	    var play = setInterval(frame,2000);
 		var step = 0;
@@ -150,8 +145,7 @@
 			  if(step>=timeList.length-1){
 			      clearInterval(play);
 			  }
-			  else{ 
-			       document.getElementById('date').innerHTML = timeList[step]; 
+			  else{  
 			      map.data.setStyle(function(feature) {
 					  magnitude = feature.getProperty('mag');
 		              deepness = feature.getProperty('deep');
@@ -160,6 +154,7 @@
 			        	  if (time == timeList[step]){
 			        	      dataVisable = true;
 			        	  };
+						  document.getElementById('date').innerHTML = timeList[step];
 						  console.log("step: ",step,",time: ", time,",timeList[step]: ",timeList[step],",dataVisable: ",dataVisable);
                           return {
                             visible:dataVisable,
@@ -167,14 +162,10 @@
                           };
                       });
 			  }
-			 
 			  step = step + 1;
         }
 	}
     </script>
-    <!--<script async defer
-        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDW2R3JvnGX3WPGyv2NOH_TbprbOIFmBuc&libraries=visualization&callback=initMap">
-    </script>-->
 	<script async defer
         src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDW2R3JvnGX3WPGyv2NOH_TbprbOIFmBuc&libraries=visualization&callback=initMap">
     </script>
