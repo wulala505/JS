@@ -1,36 +1,73 @@
 <!DOCTYPE html>
 <html>
   <head>
+  <title>台灣地震分布圖</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" rel="stylesheet">
   <script src="https://d3js.org/d3.v3.min.js"></script>
     <style>
-      /* Always set the map height explicitly to define the size of the div
-       * element that contains the map. */
       #map {
         height: 100%;
-		width:70%;
+		width:100%;
       }
-      /* Optional: Makes the sample page fill the window. */
       html, body {
         height: 100%;
         margin: 0;
         padding: 0;
       }
-	  div{
-	      float:left;
+	  .row .col-md-8,.col-md-4{
+	      padding:0;
+	  }
+	  h1{
+	      text-align: center;
+	  }
+	  #timeSerial{
+	      z-index:1000;
+		  position:absolute;
+		  bottom:10px;
+		  left:10px;
+		  background-color:#111;
+		  opacity:0.9;
+		  width:500px;
+		  color:white;
+	  }
+	  .timeButton{
+	      background-color:red;
+	  }
+	  .nav_title{
+	      height:10%;
+	  }
+	  #date{
+	      margin:0 auto;
 	  }
     </style>
   </head>
   <body>
-    <div id="map"></div>
+
+    <div class="row" style="height:100%;margin:0;">
+	    <div class="col-md-12 nav_title">
+		    <h1>Geodesign-TPE</h1>
+		</div>
+	    <div class="col-md-8" style="height:90%;">
+            <div id="map"></div>
+		</div>
+		<div id="timeSerial">
+		    <button class="btn timeButton" onclick="playTime()">時間序列</button><label id="date"></label>
+		</div>
 	
-	<div id="infoArea">
-	    <h1>Geodesign-TPE</h1>
+	    <div class="col-md-4" id="infoArea">
+	        
 		<!--
 		<button class="btn">泡泡圖</button>
 		<button class="btn">熱區圖</button>
 		-->
-		<p id="property"></p>
+		    <p id="property"></p>
+			
+	    </div>
+		
 	</div>
+
 	
     <script>
 	window.onload=function(){
@@ -87,13 +124,46 @@
 		
 		map.data.addListener('click', function(event) {
 		    var context = "";
-            context += '規模: ' + event.feature.getProperty('mag');
-			context += '震央深度: ' + event.feature.getProperty('deep');
+			context += '時間: ' + event.feature.getProperty('time') + "</br>";
+            context += '規模: ' + event.feature.getProperty('mag') + "</br>";
+			context += '震央深度: ' + event.feature.getProperty('deep') + "</br>";
 			context += '震央位置: ' + event.feature.getProperty('center');
-			document.getElementById('property').textContent = context;
+			document.getElementById('property').innerHTML = context;
        });
       }
-	    
+	
+
+    //時序功能
+    var timeList = ["2月01日","2月02日","2月03日","2月04日","2月05日","2月06日","2月07日"] ;    
+	
+	function playTime(){
+	    document.getElementById('date').innerHTML = "重新繪製中";
+	    var play = setInterval(frame,2000);
+		var step = 0;
+        function frame() {
+			  if(step>=timeList.length-1){
+			      clearInterval(play);
+			  }
+			  else{    
+			      map.data.setStyle(function(feature) {
+					  magnitude = feature.getProperty('mag');
+		              deepness = feature.getProperty('deep');
+   					  var time = feature.getProperty('time').substring(0, 5);
+                          var dataVisable = false;
+			        	  if (time == timeList[step]){
+			        	      dataVisable = true;
+			        	  };
+						  //console.log("time: ", time,"timeList[step]: ",timeList[step],"dataVisable: ",dataVisable);
+                          return {
+                            visible:dataVisable,
+							icon: getCircle(magnitude,deepness)
+                          };
+                      });
+				  document.getElementById('date').innerHTML = timeList[step];  
+			      step = step + 1;
+			  }
+        }
+	}
     </script>
     <!--<script async defer
         src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDW2R3JvnGX3WPGyv2NOH_TbprbOIFmBuc&libraries=visualization&callback=initMap">
