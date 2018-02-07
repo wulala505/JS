@@ -16,7 +16,7 @@
         margin: 0;
         padding: 0;
       }
-	  .row .col-md-8,.col-md-4{
+	  .row .col-md-12,.col-md-4{
 	      padding:0;
 	  }
 	  h1{
@@ -26,10 +26,11 @@
 	      z-index:1000;
 		  position:absolute;
 		  bottom:10px;
-		  left:10px;
 		  background-color:#111;
 		  opacity:0.9;
-		  width:500px;
+		  width:300px;
+		  left:50%;
+		  transform:translate(-150px,0);
 		  color:white;
 	  }
 	  .timeButton{
@@ -49,44 +50,33 @@
 	    <div class="col-md-12 nav_title">
 		    <h1>Geodesign-TPE</h1>
 		</div>
-	    <div class="col-md-8" style="height:90%;">
+	    <div class="col-md-12" style="height:90%;">
             <div id="map"></div>
 		</div>
 		<div id="timeSerial">
 		    <button class="btn timeButton" onclick="playTime()">時間序列</button><label id="date"></label>
 		</div>
 	
-	    <div class="col-md-4" id="infoArea">
-	        
-		<!--
-		<button class="btn">泡泡圖</button>
-		<button class="btn">熱區圖</button>
-		-->
+	    <!--
+		<div class="col-md-4" id="infoArea">
 		    <p id="property"></p>
-			
 	    </div>
+		-->
 		
 	</div>
 
 	
     <script>
-	window.onload=function(){
-	
-	};
       var map;
+	  var infoWindowList = [];
       function initMap() {
         map = new google.maps.Map(document.getElementById('map'), {
           zoom: 7,
-          center: {lat: 23, lng: 123},
+          center: {lat: 23, lng: 122},
           mapTypeId: 'terrain'
         });
 
-        // Create a <script> tag and set the USGS URL as the source.
         var script = document.createElement('script');
-
-        // This example uses a local copy of the GeoJSON stored at
-        // http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_week.geojsonp
-        //script.src = 'https://developers.google.com/maps/documentation/javascript/examples/json/earthquake_GeoJSONP.js';
         script.src = 'https://togetherhoo.github.io/JS/Geodesign-TPE/FebEarthquack.js';
 		document.getElementsByTagName('head')[0].appendChild(script);
 
@@ -104,7 +94,6 @@
               .linear()
               .domain([0,20])
 			  .range(['rgb(205,17,3)','rgb(255,215,93)']);
-			  //console.log("deep: ",deepness, " , color: " , colors(deepness));
 		return {
           path: google.maps.SymbolPath.CIRCLE,
           fillColor: colors(deepness),
@@ -112,10 +101,10 @@
           scale: Math.pow(2, magnitude) / 2,
           strokeColor: 'white',
           strokeWeight: .5,
-		  clickale:true
+		  clickable:true
         };
       }
-
+	  
       function eqfeed_callback(results) {
         
 		map.data.addGeoJson(results);
@@ -123,12 +112,28 @@
 		console.log(results.features[0].properties.time);
 		
 		map.data.addListener('click', function(event) {
+		    //console.log("event: ",event);
 		    var context = "";
 			context += '時間: ' + event.feature.getProperty('time') + "</br>";
             context += '規模: ' + event.feature.getProperty('mag') + "</br>";
 			context += '震央深度: ' + event.feature.getProperty('deep') + "</br>";
 			context += '震央位置: ' + event.feature.getProperty('center');
-			document.getElementById('property').innerHTML = context;
+			//document.getElementById('property').innerHTML = context;
+			var infowindow = new google.maps.InfoWindow({
+                content: context
+            });
+			infoWindowList.push(infowindow);
+			if(infoWindowList.length>1){
+			    infoWindowList[0].close();
+				infoWindowList=[];
+				infoWindowList.push(infowindow);
+				infowindow.setPosition(event.latLng);
+                infowindow.open(map);
+			}
+			else{
+			    infowindow.setPosition(event.latLng);
+                infowindow.open(map);
+			}
        });
       }
 	
@@ -137,6 +142,7 @@
     var timeList = ["2月01日","2月02日","2月03日","2月04日","2月05日","2月06日","2月07日"] ;    
 	
 	function playTime(){
+	    
 	    document.getElementById('date').innerHTML = "重新繪製中";
 	    var play = setInterval(frame,2000);
 		var step = 0;
@@ -144,7 +150,8 @@
 			  if(step>=timeList.length-1){
 			      clearInterval(play);
 			  }
-			  else{    
+			  else{ 
+			       document.getElementById('date').innerHTML = timeList[step]; 
 			      map.data.setStyle(function(feature) {
 					  magnitude = feature.getProperty('mag');
 		              deepness = feature.getProperty('deep');
@@ -153,15 +160,15 @@
 			        	  if (time == timeList[step]){
 			        	      dataVisable = true;
 			        	  };
-						  //console.log("time: ", time,"timeList[step]: ",timeList[step],"dataVisable: ",dataVisable);
+						  console.log("step: ",step,",time: ", time,",timeList[step]: ",timeList[step],",dataVisable: ",dataVisable);
                           return {
                             visible:dataVisable,
 							icon: getCircle(magnitude,deepness)
                           };
                       });
-				  document.getElementById('date').innerHTML = timeList[step];  
-			      step = step + 1;
 			  }
+			 
+			  step = step + 1;
         }
 	}
     </script>
