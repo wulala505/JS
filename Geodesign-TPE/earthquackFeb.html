@@ -10,6 +10,7 @@
       #map {
         height: 100%;
 		width:100%;
+		margin:0;
       }
       html, body {
         height: 100%;
@@ -44,7 +45,7 @@
 	      cursor:pointer;
 	  }
 	  .nav_title{
-	      height:10%;
+	      height:20%;
 	  }
 	  #date{
 	      line-height:42px;
@@ -94,8 +95,14 @@
     <div class="row" style="height:100%;margin:0;">
 	    <div class="col-md-12 nav_title">
 		    <h1>Geodesign-Taipei</h1>
+			
+			<div id="contact" style="width:300px; margin:0 auto;">
+			    <a style="width:120px; float:left;" class="btn btn-info" href="https://www.meetup.com/Geodesign-TPE-Meetup/" target="blank">meetup</a>
+			    <a style="width:120px; float:right;" class="btn btn-info" href="https://www.facebook.com/groups/geodesign.tpe/" target="blank">facebook</a>
+		    </div>
+			
 		</div>
-	    <div class="col-md-12" style="height:90%;">
+	    <div class="col-md-12" style="height:80%;">
             <div id="map"></div>
 			
 			<div id="timeSerial">
@@ -131,7 +138,7 @@
 		    </div>
 			<div id="legendDivBack">
 			</div>
-		
+			
 		</div>
 		
 		
@@ -149,8 +156,10 @@
 	
 	<div>
 		
-	<a href="https://www.meetup.com/Geodesign-TPE-Meetup/" target="blank">在meetup上關注我們定期舉辦的活動</a>
-	
+	<!--
+	https://www.facebook.com/groups/geodesign.tpe/
+	https://www.facebook.com/nbablissfully
+	-->
 	</div>
 
     <script>
@@ -160,7 +169,13 @@
         map = new google.maps.Map(document.getElementById('map'), {
           zoom: 7,
           center: {lat: 23, lng: 122},
-          mapTypeId: 'terrain'
+          mapTypeId: 'terrain',
+		  zoomControlOptions: {
+               position: google.maps.ControlPosition.RIGHT_CENTER
+          },
+          streetViewControlOptions: {
+              position: google.maps.ControlPosition.RIGHT_CENTER
+          }
         });
 
         var script = document.createElement('script');
