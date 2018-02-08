@@ -1,5 +1,11 @@
 <!DOCTYPE html>
 <html>
+  <!--
+  Developer : 鍾佳霖
+  歡迎與我聯繫提供建議或討論 : 
+  https://www.facebook.com/nbablissfully
+  nbablissfully@hotmail.com
+  -->
   <head>
   <title>台灣地震分布圖</title>
   <meta charset="UTF-8">
@@ -28,16 +34,19 @@
 	      z-index:1000;
 		  position:absolute;
 		  bottom:5px;
-		  background-color:#111;
+		  //background-color:#111;
+		  //color:white;
+		  background-color:white;
+		  color:black;
 		  opacity:0.9;
 		  width:300px;
 		  left:50%;
 		  transform:translate(-150px,0);
-		  color:white;
 		  border-radius:5px;
 	  }
 	  .timeButton{
-	      background-color:#FFDA44;
+	      background-color:#009688;
+		  color:white;
 		  font-family:Microsoft JhengHei;
 		  float:right;
 	  }
@@ -107,7 +116,7 @@
 			
 			<div id="timeSerial">
 			    <svg id="timePlaySVG" onclick="playTime()" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Capa_1" x="0px" y="0px" viewBox="0 0 60 60" style="enable-background:new 0 0 60 60;" xml:space="preserve" width="38px" height="38px">
-                    <path d="M30,0C13.458,0,0,13.458,0,30s13.458,30,30,30s30-13.458,30-30S46.542,0,30,0z M45.563,30.826l-22,15  C23.394,45.941,23.197,46,23,46c-0.16,0-0.321-0.038-0.467-0.116C22.205,45.711,22,45.371,22,45V15c0-0.371,0.205-0.711,0.533-0.884  c0.328-0.174,0.724-0.15,1.031,0.058l22,15C45.836,29.36,46,29.669,46,30S45.836,30.64,45.563,30.826z" fill="#FFDA44"/>
+                    <path d="M30,0C13.458,0,0,13.458,0,30s13.458,30,30,30s30-13.458,30-30S46.542,0,30,0z M45.563,30.826l-22,15  C23.394,45.941,23.197,46,23,46c-0.16,0-0.321-0.038-0.467-0.116C22.205,45.711,22,45.371,22,45V15c0-0.371,0.205-0.711,0.533-0.884  c0.328-0.174,0.724-0.15,1.031,0.058l22,15C45.836,29.36,46,29.669,46,30S45.836,30.64,45.563,30.826z" fill="#009688"/>
                 </svg>
 			    <label id="date"></label><button class="btn timeButton" onclick="showAll()">顯示全部</button>
 		    </div>
@@ -227,8 +236,8 @@
 	var switchType = "play";
 	var clickTime = 0;
 	
-	var pauseIcon = '<rect x="7" y="6" style="fill:#FFDA44;" width="38" height="38"/>';	
-	var playIcon = '<path d="M30,0C13.458,0,0,13.458,0,30s13.458,30,30,30s30-13.458,30-30S46.542,0,30,0z M45.563,30.826l-22,15  C23.394,45.941,23.197,46,23,46c-0.16,0-0.321-0.038-0.467-0.116C22.205,45.711,22,45.371,22,45V15c0-0.371,0.205-0.711,0.533-0.884  c0.328-0.174,0.724-0.15,1.031,0.058l22,15C45.836,29.36,46,29.669,46,30S45.836,30.64,45.563,30.826z" fill="#FFDA44"/>';	
+	var pauseIcon = '<rect x="7" y="6" style="fill:#009688;" width="38" height="38"/>';	
+	var playIcon = '<path d="M30,0C13.458,0,0,13.458,0,30s13.458,30,30,30s30-13.458,30-30S46.542,0,30,0z M45.563,30.826l-22,15  C23.394,45.941,23.197,46,23,46c-0.16,0-0.321-0.038-0.467-0.116C22.205,45.711,22,45.371,22,45V15c0-0.371,0.205-0.711,0.533-0.884  c0.328-0.174,0.724-0.15,1.031,0.058l22,15C45.836,29.36,46,29.669,46,30S45.836,30.64,45.563,30.826z" fill="#009688"/>';	
 	
 	function playTime(){
 	    
