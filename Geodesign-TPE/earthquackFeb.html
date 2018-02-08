@@ -21,21 +21,24 @@
 	  }
 	  h1{
 	      text-align: center;
+		  font-size:2.2em;
 	  }
 	  #timeSerial{
 	      z-index:1000;
 		  position:absolute;
-		  bottom:10px;
+		  bottom:5px;
 		  background-color:#111;
 		  opacity:0.9;
 		  width:300px;
 		  left:50%;
 		  transform:translate(-150px,0);
 		  color:white;
+		  border-radius:5px;
 	  }
 	  .timeButton{
-	      background-color:red;
+	      background-color:#FFDA44;
 		  font-family:Microsoft JhengHei;
+		  float:right;
 	  }
 	  .timeButton:hover{
 	      cursor:pointer;
@@ -44,8 +47,46 @@
 	      height:10%;
 	  }
 	  #date{
-	      margin:0 auto;
+	      line-height:42px;
+		  margin:0 5px 0 5px;
 	  }
+	  #timePlaySVG{
+	      margin:2px 2px 2px 2px;
+		  float:left;
+	  }
+	  #timePlaySVG:hover{
+	      cursor:pointer;
+	  }
+	  #legendDiv{
+	      z-index:1000;
+		  position:absolute;
+		  bottom:60px;
+		  width:300px;
+		  left:50%;
+		  transform:translate(-150px,0);
+	  }
+	  #legendDivBack{
+	      z-index:999;
+		  position:absolute;
+		  bottom:60px;
+		  background-color:white;
+		  opacity:0.7;
+		  width:300px;
+		  height:60px;
+		  left:50%;
+		  transform:translate(-150px,0);
+	  }
+	  #grad1 {
+      float:left;
+      height: 18px;
+      width:120px;
+      margin-left:5px;
+      background: rgb(205,17,3);
+      background: linear-gradient(to right, rgb(205,17,3) , rgb(255,215,93));
+      }
+      #grad1>label{
+      //color:white;
+      }
     </style>
   </head>
   <body>
@@ -56,11 +97,60 @@
 		</div>
 	    <div class="col-md-12" style="height:90%;">
             <div id="map"></div>
+			
+			<div id="timeSerial">
+			    <svg id="timePlaySVG" onclick="playTime()" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Capa_1" x="0px" y="0px" viewBox="0 0 60 60" style="enable-background:new 0 0 60 60;" xml:space="preserve" width="38px" height="38px">
+                    <path d="M30,0C13.458,0,0,13.458,0,30s13.458,30,30,30s30-13.458,30-30S46.542,0,30,0z M45.563,30.826l-22,15  C23.394,45.941,23.197,46,23,46c-0.16,0-0.321-0.038-0.467-0.116C22.205,45.711,22,45.371,22,45V15c0-0.371,0.205-0.711,0.533-0.884  c0.328-0.174,0.724-0.15,1.031,0.058l22,15C45.836,29.36,46,29.669,46,30S45.836,30.64,45.563,30.826z" fill="#FFDA44"/>
+                </svg>
+			    <label id="date"></label><button class="btn timeButton" onclick="showAll()">顯示全部</button>
+		    </div>
+			
+			<div id="legendDiv">
+		
+		        <div style="width:100%;margin-left:50px">
+                <div style="float:left;">
+                震源深度:
+                </div>
+                <div id="grad1"><label>淺</label><label style="float:right;">深</label></div>
+                </div>
+                
+                <div style="width:100%;float:left;margin-left:50px">
+                芮氏規模:
+                <svg style="margin-top:5px;" height="19px" width="120px">
+                <g>
+                <text x="0" y="15">小</text>
+                <circle cx="25" cy="10" r="5" stroke="rgb(205,17,3)" stroke-width="1" fill="none" />
+                <circle cx="40" cy="10" r="6" stroke="rgb(205,17,3)" stroke-width="1" fill="none" />
+                <circle cx="60" cy="10" r="7" stroke="rgb(205,17,3)" stroke-width="" fill="none" />
+                <circle cx="80" cy="10" r="8.5" stroke="rgb(205,17,3)" stroke-width="1" fill="none" />
+                <text x="90" y="15">大</text>
+                </g>
+                </svg>
+                </div>
+		
+		    </div>
+			<div id="legendDivBack">
+			</div>
+		
 		</div>
-		<div id="timeSerial">
-		    <button class="btn timeButton" onclick="playTime()">時間序列</button><label id="date"></label>
-		</div>
-	<a rel="license" href="http://creativecommons.org/licenses/by/3.0/tw/"><img alt="創用 CC 授權條款" style="border-width:0" src="https://i.creativecommons.org/l/by/3.0/tw/80x15.png" /></a>本著作係採用<a rel="license" href="http://creativecommons.org/licenses/by/3.0/tw/">創用 CC 姓名標示 3.0 台灣 授權條款</a>授權.	
+		
+		
+		
+		
+	<!--
+	<a rel="license" href="http://creativecommons.org/licenses/by/3.0/tw/">
+	  <img alt="創用 CC 授權條款" style="border-width:0" src="https://i.creativecommons.org/l/by/3.0/tw/80x15.png" />
+	</a>本著作係採用
+	<a rel="license" href="http://creativecommons.org/licenses/by/3.0/tw/">
+	    創用 CC 姓名標示 3.0 台灣 授權條款
+	</a>授權.	
+	-->
+	</div>
+	
+	<div>
+		
+	<a href="https://www.meetup.com/Geodesign-TPE-Meetup/" target="blank">在meetup上關注我們定期舉辦的活動</a>
+	
 	</div>
 
     <script>
@@ -105,18 +195,13 @@
       function eqfeed_callback(results) {
         
 		map.data.addGeoJson(results);
-		console.log(results);
-		console.log(results.features[0].properties.time);
-		
 		map.data.addListener('click', function(event) {
-		    //console.log("event: ",event);
 		    var context = "<div style='font-family:Microsoft JhengHei;font-size:1.2em'>";
 			context += '時間: ' + event.feature.getProperty('time') + "</br>";
             context += '芮氏規模: ' + event.feature.getProperty('mag') + "</br>";
 			context += '震央深度: ' + event.feature.getProperty('deep') + " 公里</br>";
 			context += '震央位置: ' + event.feature.getProperty('center');
 			context += "</div>"
-			//document.getElementById('property').innerHTML = context;
 			var infowindow = new google.maps.InfoWindow({
                 content: context
             });
@@ -137,19 +222,39 @@
 
     //時序功能
     var timeList = ["2月01日","2月02日","2月03日","2月04日","2月05日","2月06日","2月07日"] ;    
+	var step = 0;
+	var pauseStep = 0;
+	var switchType = "play";
+	var clickTime = 0;
+	
+	var pauseIcon = '<rect x="7" y="6" style="fill:#FFDA44;" width="8" height="38"/><rect x="22" y="6" style="fill:#FFDA44;" width="8" height="38"/>';	
+	var playIcon = '<path d="M30,0C13.458,0,0,13.458,0,30s13.458,30,30,30s30-13.458,30-30S46.542,0,30,0z M45.563,30.826l-22,15  C23.394,45.941,23.197,46,23,46c-0.16,0-0.321-0.038-0.467-0.116C22.205,45.711,22,45.371,22,45V15c0-0.371,0.205-0.711,0.533-0.884  c0.328-0.174,0.724-0.15,1.031,0.058l22,15C45.836,29.36,46,29.669,46,30S45.836,30.64,45.563,30.826z" fill="#FFDA44"/>';	
+	
 	function playTime(){
-	    if(infoWindowList.length>=1){
+	    
+		if(clickTime % 2 ==0){
+		    document.getElementById('date').innerHTML = "繪製中";
+			document.getElementById('timePlaySVG').innerHTML = pauseIcon;
+			switchType = "play";
+			clickTime += 1;
+	    }
+		else{
+		    document.getElementById('timePlaySVG').innerHTML = playIcon; 
+			switchType = "pause";
+			clickTime += 1;
+		}
+		console.log("switchType: ",switchType);
+		if(infoWindowList.length>=1){
 			    infoWindowList[0].close();
 				infoWindowList=[];
 			}
-	    document.getElementById('date').innerHTML = "重新繪製中";
 	    var play = setInterval(frame,2000);
-		var step = 0;
-        function frame() {
-			  if(step>=timeList.length-1){
-			      clearInterval(play);
+        
+		function frame() {
+			  if(step>=timeList.length-1 || switchType =="pause"){
+				  clearInterval(play);
 			  }
-			  else{  
+			  else{			  
 			      map.data.setStyle(function(feature) {
 					  magnitude = feature.getProperty('mag');
 		              deepness = feature.getProperty('deep');
@@ -167,7 +272,21 @@
                       });
 			  }
 			  step = step + 1;
+			  pauseStep = step;
         }
+	step = 0;
+	pauseStep = step;
+	}
+	function showAll(){
+	    document.getElementById('date').innerHTML = "";
+	    map.data.setStyle(function(feature) {
+			 magnitude = feature.getProperty('mag');
+             deepness = feature.getProperty('deep');
+            return {
+                visible:true,
+			    icon: getCircle(magnitude,deepness)
+             };
+        });
 	}
     </script>
 	<script async defer
